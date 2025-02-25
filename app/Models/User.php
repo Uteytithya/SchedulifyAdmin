@@ -8,6 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Traits\UuidTrait;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\SessionRequest;
+use App\Models\Notification;
+
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -22,7 +25,7 @@ class User extends Authenticatable implements JWTSubject
 
     // UUID primary key
     protected $keyType = 'string';
-    protected $primaryKey = 'global_id';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'name',
@@ -55,7 +58,7 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
- /**
+    /**
      * Get the identifier that will be stored in the JWT.
      *
      * @return mixed
@@ -73,5 +76,20 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function requests()
+    {
+        return $this->hasMany(related: SessionRequest::class, foreignKey: 'user_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id');
+    }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'course_users', 'user_id', 'course_id');
     }
 }
