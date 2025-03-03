@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web\Auth;
 
-use App\Models\session;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\ScheduleSession;
 
-class SessionController extends Controller
+class ScheduleSessionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class SessionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(session $session)
+    public function show(ScheduleSession $session)
     {
         //
     }
@@ -42,7 +43,7 @@ class SessionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(session $session)
+    public function edit(ScheduleSession $session)
     {
         //
     }
@@ -50,7 +51,7 @@ class SessionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, session $session)
+    public function update(Request $request, ScheduleSession $session)
     {
         //
     }
@@ -58,7 +59,7 @@ class SessionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(session $session)
+    public function destroy(ScheduleSession $session)
     {
         //
     }

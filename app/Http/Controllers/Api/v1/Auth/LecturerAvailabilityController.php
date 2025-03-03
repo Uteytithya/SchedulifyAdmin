@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1\Auth;
 
-use App\Models\lecturer_availability;
+use App\Http\Controllers\Api\v1\BaseAPI;
+use App\Models\LecturerAvailability;
 use Illuminate\Http\Request;
 
-class LecturerAvailabilityController extends Controller
+class LecturerAvailabilityController extends BaseAPI
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class LecturerAvailabilityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(lecturer_availability $lecturer_availability)
+    public function show(LecturerAvailability $lecturerAvailability)
     {
         //
     }
@@ -42,7 +43,7 @@ class LecturerAvailabilityController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(lecturer_availability $lecturer_availability)
+    public function edit(LecturerAvailability $lecturerAvailability)
     {
         //
     }
@@ -50,7 +51,7 @@ class LecturerAvailabilityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, lecturer_availability $lecturer_availability)
+    public function update(Request $request, LecturerAvailability $lecturerAvailability)
     {
         //
     }
@@ -58,7 +59,7 @@ class LecturerAvailabilityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(lecturer_availability $lecturer_availability)
+    public function destroy(LecturerAvailability $lecturerAvailability)
     {
         //
     }

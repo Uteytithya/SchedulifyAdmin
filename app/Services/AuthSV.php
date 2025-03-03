@@ -3,29 +3,23 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use App\Services\BaseService;
 
-
-class AuthSV extends BaseService
+class AuthSV
 {
-
-    // use BaseService;
     public function getQuery()
     {
         return User::query();
     }
 
-   /**
-   * Get a JWT via given credentials.
-   *
-   * @return \Illuminate\Http\JsonResponse
-   */
+    /**
+     * Get a JWT via given credentials.
+     */
     public function login($credentials, $userData, $role)
     {
         if (!$credentials) {
@@ -33,135 +27,109 @@ class AuthSV extends BaseService
         }
 
         $user = User::where('email', $credentials['email'])
-                    ->where('role', $role)
-                    ->first();
+            ->where('role', $role)
+            ->first();
 
-        $isDeactivated = $user->status == 'inactive' ? 0 : 1;
-        if (!$user) { //Incorrect email
+        if (!$user) {
             return response()->json(['error' => 'Email or Password is incorrect!'], 401);
         }
-        else if ($isDeactivated == 0) {
+
+        if ($user->status == 'inactive') {
             return response()->json(['error' => 'User is deactivated!'], 401);
         }
-        else {
 
-            $encryptedPassword = $user->password;
-            if (!Hash::check($credentials['password'], $encryptedPassword)) { //Incorrect password
+        if (!Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Email or Password is incorrect!'], 401);
-            }
-            if ($role == 'admin') {
-                if (!$token = Auth::guard('api')->attempt($credentials)) {
-                    return response()->json(['error' => 'Unauthorized'], 401);
-                }
-            }
-            if (!$token = Auth::guard('api-user')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-            }
         }
-        return $this->respondWithToken($token, $userData, $role);
+
+        $guard = $role === 'user' ? 'api' : 'admin';
+
+        if (!$token = Auth::guard($guard)->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token, $user, $guard);
     }
 
     /**
-     *
-     * Register a User
-     *
+     * Register a User.
      */
-    public function register($data, $role)
+    public function register($data)
     {
         $query = $this->getQuery();
-        $user = $query->create([
+
+        return $query->create(attributes: [
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role' => $role
+            'role' => $data['role']
         ]);
-
-        return response()->json(['message' => 'User created successfully'], 201);
     }
 
-   /**
-    * Get the authenticated User.
-    *
-    * @return \Illuminate\Http\JsonResponse
-    */
-   public function GetProfile($role)
-   {
+    /**
+     * Get the authenticated User.
+     */
+    public function GetProfile($role)
+    {
         try {
-            # Here we just get information about current user
-            if ($role == 'admin') {
-                return response()->json(Auth::guard('api')->user());
-            }
-            return response()->json(Auth::guard('api-user')->user());
-        }  catch (TokenExpiredException $e) {
+            $guard = 'api';
+
+            return response()->json(Auth::guard($guard)->user());
+        } catch (TokenExpiredException $e) {
             return response()->json(['error' => 'Token has expired'], 401);
         }
-   }
-
-   /**
-    * Log the user out (Invalidate the token).
-    *
-    * @return \Illuminate\Http\JsonResponse
-    */
-   public function logout($role)
-   {
-        if ($role == 'admin') {
-            Auth::guard('api')->logout();
-            return response()->json(['message' => 'Successfully logged out']);
-        }
-        Auth::guard('api-user')->logout();
-      return response()->json(['message' => 'Successfully logged out']);
-   }
-
-   /**
-    * Refresh a token.
-    *
-    * @return \Illuminate\Http\JsonResponse
-    */
-   public function refreshToken($role)
-    {
-        # When access token will be expired, we are going to generate a new one with this function
-        if ($role == 'admin') {
-            return $this->respondWithRefreshToken(Auth::guard('api')->setTTL(config('jwt.ttl'))->refresh(), Auth::guard($role)->user(), $role);
-        }
-        return $this->respondWithRefreshToken(Auth::guard('api-user')->setTTL(config('jwt.refresh_ttl'))->refresh());
     }
 
-   /**
-    * Get the token array structure.
-    *
-    * @param  string $token
-    *
-    * @return \Illuminate\Http\JsonResponse
-    */
-   protected function respondWithToken($token, $user = null, $role)
-   {
-      # This function is used to make JSON response with new
-      # access token of current user
-        $expiresIn = Auth::guard('api-user')->factory()->getTTL() * 60;
-        if ($role == 'admin') {
-            $expiresIn = Auth::guard('api')->factory()->getTTL() * 60;
+    /**
+     * Log the user out (Invalidate the token).
+     */
+    public function logout($role)
+    {
+        $guard = 'api';
+        Auth::guard($guard)->logout();
+        JWTAuth::invalidate(JWTAuth::getToken());
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * Refresh a token.
+     */
+    public function refreshToken()
+    {
+        try {
+            $newToken = JWTAuth::refresh(JWTAuth::getToken());
+        } catch (TokenExpiredException $e) {
+            throw new Exception('Token has expired', 401);
+        } catch (TokenExpiredException $e) {
+            throw new Exception('Token is invalid', 401);
+        } catch (TokenExpiredException $e) {
+            throw new Exception('Token is absent', 401);
         }
+
+        return $this->respondWithRefreshToken($newToken);
+    }
+
+    /**
+     * Get the token array structure.
+     */
+    protected function respondWithToken($token, $user = null, $role)
+    {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'data' => [
-                'user' => $user
+                'user' => $user,
             ],
-            'expires_in_second' => $expiresIn
+            'expires_in_second' => Auth::guard($role)->factory()->getTTL() * 60
         ]);
-   }
+    }
 
-   protected function respondWithRefreshToken($token, $user = null)
-   {
-      # This function is used to make JSON response with new
-      # refresh token of current user
-      return response()->json([
-         'refresh_token' => $token,
-         'token_type' => 'bearer',
-         // 'data' => [
-         //    'user' => $user
-         // ],
-         'expires_in_second' => config('jwt.refresh_ttl') * 60
-      ]);
-   }
+    protected function respondWithRefreshToken($token)
+    {
+        return response()->json([
+            'refresh_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in_second' => config('jwt.refresh_ttl') * 60,
+        ]);
+    }
 }

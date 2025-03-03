@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1\Auth;
 
+use App\Http\Controllers\Api\v1\BaseAPI;
 use App\Models\SessionRequest;
 use Illuminate\Http\Request;
 
-class SessionRequestController extends Controller
+
+class SessionRequestController extends BaseAPI
 {
     /**
      * Display a listing of the resource.

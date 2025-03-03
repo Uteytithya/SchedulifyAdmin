@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web\Auth;
 
-use App\Models\timetable;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Timetable;
 
 class TimetableController extends Controller
 {
@@ -34,7 +35,7 @@ class TimetableController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(timetable $timetable)
+    public function show(Timetable $timetable)
     {
         //
     }
@@ -42,7 +43,7 @@ class TimetableController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(timetable $timetable)
+    public function edit(Timetable $timetable)
     {
         //
     }
@@ -50,7 +51,7 @@ class TimetableController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, timetable $timetable)
+    public function update(Request $request, Timetable $timetable)
     {
         //
     }
@@ -58,7 +59,7 @@ class TimetableController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(timetable $timetable)
+    public function destroy(Timetable $timetable)
     {
         //
     }

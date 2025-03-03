@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1\Auth;
 
-use App\Models\students_group;
+use App\Models\StudentGroup;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Api\v1\BaseAPI;
 
-class StudentsGroupController extends Controller
+class StudentsGroupController extends BaseAPI
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class StudentsGroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(students_group $students_group)
+    public function show(StudentGroup $students_group)
     {
         //
     }
@@ -42,7 +43,7 @@ class StudentsGroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(students_group $students_group)
+    public function edit(StudentGroup $students_group)
     {
         //
     }
@@ -50,7 +51,7 @@ class StudentsGroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, students_group $students_group)
+    public function update(Request $request, StudentGroup $students_group)
     {
         //
     }
@@ -58,7 +59,7 @@ class StudentsGroupController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(students_group $students_group)
+    public function destroy(StudentGroup $students_group)
     {
         //
     }

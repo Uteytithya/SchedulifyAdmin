@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web\Auth;
 
-use App\Models\room;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Room;
 
 class RoomController extends Controller
 {
@@ -34,7 +35,7 @@ class RoomController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(room $room)
+    public function show(Room $room)
     {
         //
     }
@@ -42,7 +43,7 @@ class RoomController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(room $room)
+    public function edit(Room $room)
     {
         //
     }
@@ -50,7 +51,7 @@ class RoomController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, room $room)
+    public function update(Request $request, Room $room)
     {
         //
     }
@@ -58,7 +59,7 @@ class RoomController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(room $room)
+    public function destroy(Room $room)
     {
         //
     }
