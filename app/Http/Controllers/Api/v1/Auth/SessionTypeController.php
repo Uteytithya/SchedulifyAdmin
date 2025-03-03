@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1\Auth;
 
-use App\Models\session_type;
+use App\Http\Controllers\Api\v1\BaseAPI;
+use App\Models\SessionType;
 use Illuminate\Http\Request;
 
-class SessionTypeController extends Controller
+class SessionTypeController extends BaseAPI
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class SessionTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(session_type $session_type)
+    public function show(SessionType $session_type)
     {
         //
     }
@@ -42,7 +43,7 @@ class SessionTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(session_type $session_type)
+    public function edit(SessionType $session_type)
     {
         //
     }
@@ -50,7 +51,7 @@ class SessionTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, session_type $session_type)
+    public function update(Request $request, SessionType $session_type)
     {
         //
     }
@@ -58,7 +59,7 @@ class SessionTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(session_type $session_type)
+    public function destroy(SessionType $session_type)
     {
         //
     }

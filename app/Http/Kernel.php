@@ -24,16 +24,12 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            // ...
+            'throttle:web',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
         'api' => [
             'throttle:api',
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        ],
-
-        'api-user' => [
-            'throttle:api-user',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -46,8 +42,7 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
-        // Other middleware
-        'auth:api' => \App\Http\Middleware\AdminMiddleware::class,
-        'auth:api-user' => \App\Http\Middleware\UserMiddleware::class,
+        'auth:web' => \App\Http\Middleware\web\AdminMiddleware::class,
+        'auth:api' => \App\Http\Middleware\api\UserMiddleware::class,
     ];
 }

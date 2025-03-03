@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\StudentGroup;
 
-class timetable extends Model
+class Timetable extends Model
 {
     use HasFactory;
 

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1\Auth;
 
-use App\Models\course;
+use App\Http\Controllers\Api\v1\BaseAPI;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
-class CourseController extends Controller
+class CourseController extends BaseAPI
 {
     /**
      * Display a listing of the resource.

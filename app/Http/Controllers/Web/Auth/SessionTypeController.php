@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web\Auth;
 
-use App\Models\session_type;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\SessionType;
 
 class SessionTypeController extends Controller
 {
@@ -34,7 +35,7 @@ class SessionTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(session_type $session_type)
+    public function show(SessionType $type)
     {
         //
     }
@@ -42,7 +43,7 @@ class SessionTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(session_type $session_type)
+    public function edit(SessionType $type)
     {
         //
     }
@@ -50,7 +51,7 @@ class SessionTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, session_type $session_type)
+    public function update(Request $request, SessionType $type)
     {
         //
     }
@@ -58,7 +59,7 @@ class SessionTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(session_type $session_type)
+    public function destroy(SessionType $type)
     {
         //
     }

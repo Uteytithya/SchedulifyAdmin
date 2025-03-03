@@ -44,11 +44,11 @@ return [
         ],
         'api' => [
             'driver' => 'jwt',
-            'provider' => 'admins',
-        ],
-        'api-user' => [
-            'driver' => 'jwt',
             'provider' => 'users',
+        ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
         ],
     ],
 
