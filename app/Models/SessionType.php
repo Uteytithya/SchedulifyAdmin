@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SessionType extends Model
 {
-    use HasFactory;
+    use HasFactory, UuidTrait;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
     protected $fillable = ['name', 'created_at'];

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Notification extends Model
 {
-    use HasFactory;
+    use HasFactory, UuidTrait;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
     protected $fillable = ['user_id', 'message', 'created_at'];

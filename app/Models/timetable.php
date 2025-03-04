@@ -8,7 +8,7 @@ use App\Models\StudentGroup;
 
 class timetable extends Model
 {
-    use HasFactory;
+    use HasFactory, UuidTrait;
 
     protected $keyType = 'string';
     protected $primaryKey = 'id';

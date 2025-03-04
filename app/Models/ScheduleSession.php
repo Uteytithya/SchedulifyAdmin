@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ScheduleSession extends Model
 {
-    use HasFactory;
+    use HasFactory, UuidTrait;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
     protected $fillable = ['timetable_id', 'course_user_id', 'room_id', 'day', 'start_time', 'end_time', 'status', 'session_type_id', 'created_at'];

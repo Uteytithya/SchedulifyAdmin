@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SessionRequest extends Model
 {
-    use HasFactory;
+    use HasFactory, UuidTrait;
 
     protected $keyType = 'string';
     protected $primaryKey = 'id';
