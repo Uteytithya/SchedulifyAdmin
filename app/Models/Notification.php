@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\UuidTrait;
 
 class Notification extends Model
 {
-    use HasFactory;
+    use HasFactory, UuidTrait;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
     protected $fillable = ['user_id', 'message', 'created_at'];

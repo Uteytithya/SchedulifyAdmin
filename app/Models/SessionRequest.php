@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\UuidTrait;
 
 class SessionRequest extends Model
 {
-    use HasFactory;
+    use HasFactory, UuidTrait;
 
     protected $keyType = 'string';
     protected $primaryKey = 'id';

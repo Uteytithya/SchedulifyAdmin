@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\UuidTrait;
 
 class ScheduleSession extends Model
 {
-    use HasFactory;
+    use HasFactory, UuidTrait;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
     protected $fillable = ['timetable_id', 'course_user_id', 'room_id', 'day', 'start_time', 'end_time', 'status', 'session_type_id', 'created_at'];
