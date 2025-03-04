@@ -21,9 +21,17 @@ class CourseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function showCreate(){
+        return view ('admin.create-course');
+    }
+    public function create(Request $request)
     {
-        //
+        $incomingFields = $request->validate([
+            'name'=>'required',
+            'credit'=>'required'
+        ]);
+        Course::create($incomingFields);
+        return redirect()->route('admin.course');
     }
 
     /**
@@ -39,7 +47,8 @@ class CourseController extends Controller
      */
     public function show(course $course)
     {
-        //
+        $courses=Course::all();
+        return view('admin.course-view',['courses'=>$courses]);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\UuidTrait;
@@ -11,7 +12,7 @@ class Course extends Model
     use HasFactory, UuidTrait;
     protected $keyType = 'string';
     protected $primaryKey = 'id';
-    protected $fillable = ['name', 'credit', 'created_at'];
+    protected $fillable = ['name', 'credit'];
 
     public function users()
     {
