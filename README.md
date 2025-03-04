@@ -15,7 +15,7 @@ A backend for Schedulify build on laravel.
 ```
    composer install 
    php artisan migrate 
-   php artisan jwt:secrect
+   php artisan jwt:secret
 
 ```
 3. Set up enviroment  : 
@@ -28,7 +28,7 @@ A backend for Schedulify build on laravel.
    Then, run the following command to generate key for application : 
 
    ```
-      php artisan artisan key:generate
+      php artisan key:generate
    ```
 4. Run the Project :
 

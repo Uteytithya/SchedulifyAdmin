@@ -14,6 +14,9 @@
     
     <body class="bg-gray-100 font-sans antialiased">
         <!-- Header Section -->
+         <header class="bg-white shadow-md">
+            @include('layouts.header')
+         </header>
 
         <!-- Main Layout Section -->
         <div class="flex h-screen">
