@@ -26,10 +26,13 @@
             </aside>
 
             <!-- Main Content Section -->
-            <main class="p-6">
-                <div class="bg-white rounded-lg shadow-md">
+            <main class="flex-1">
+                
                     @yield('content')
-                </div>
+
+                
+               
+               
             </main>
         </div>
 

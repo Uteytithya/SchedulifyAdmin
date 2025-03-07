@@ -24,6 +24,9 @@ class CourseController extends Controller
     public function showCreate(){
         return view ('admin.create-course');
     }
+    
+
+    //create a new course
     public function create(Request $request)
     {
         $incomingFields = $request->validate([
@@ -54,9 +57,10 @@ class CourseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(course $course)
+    public function edit(Course $course,Request $request)
     {
-        //
+        return view('admin.edit-course',['course'=>$course]);
+        
     }
 
     /**
@@ -64,7 +68,12 @@ class CourseController extends Controller
      */
     public function update(Request $request, course $course)
     {
-        //
+        $incomingFields = $request->validate([
+            'name'=>'required',
+            'credit'=>'required'
+        ]);
+        $course->update($incomingFields);
+        return redirect('/');
     }
 
     /**
@@ -72,6 +81,7 @@ class CourseController extends Controller
      */
     public function destroy(course $course)
     {
-        //
+        $course->delete();
+        return redirect('/');
     }
 }
