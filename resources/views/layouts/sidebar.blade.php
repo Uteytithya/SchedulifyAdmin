@@ -17,7 +17,7 @@
       </li>
 
       <li>
-         <a href="/course" class="{{ request()->is('course') ? $activeStyle : '' }} {{$style}}">
+         <a href="{{route('admin.course')}}" class="{{ request()->is('admin/auth/course') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-book-open-reader"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Courses</span>
          </a>
