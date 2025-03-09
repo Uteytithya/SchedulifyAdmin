@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 @section('content')
-    <div class="container mx-6 px-4 py-6 mt-8 bg-white w-[1250px] flex-col">
+    <div class="container mx-6 px-4 py-6 mt-8 bg-white flex-col">
         <h2 class="text-2xl font-extrabold mb-6">Create Course</h2>
         <form action="{{ route('admin.course_create_post') }}" method="POST">
             @csrf

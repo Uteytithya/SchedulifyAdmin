@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 @section('content')
-    <div class="container mx-6 px-4 py-6 mt-8 bg-white w-[1250px] ">
+    <div class="container mx-6 px-4 py-6 mt-8 bg-white">
         <div class="flex items-center mb-6 ">
             <h1 class="text-2xl font-extrabold">Course</h1>
 
