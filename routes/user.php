@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Auth\SessionRequestController;
 use App\Http\Controllers\Api\v1\Auth\TimetableController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
 
     Route::get('/timetable', [TimetableController::class, 'index']);
     Route::get('/timetable/{id}', [TimetableController::class, 'show']);
+
+    Route::post('request', [SessionRequestController::class, 'store']);
 });
 
 

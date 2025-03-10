@@ -31,8 +31,9 @@ return Application::configure(basePath: dirname(__DIR__))
                     'message' => 'Unauthorized access. Please log in.'
                 ], Response::HTTP_UNAUTHORIZED));
             }
-
-            return route('admin.login'); // Redirect web users to admin login page
+            else {
+                return route('admin.login');
+            }
         });
     })
     ->withExceptions(function (Exceptions $exceptions) {
