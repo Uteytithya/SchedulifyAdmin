@@ -1,4 +1,4 @@
-<div class="header flex items-center justify-between p-8 bg-white shadow-md">
+<div class="header flex items-center justify-between p-4 bg-white shadow-md">
     <div class="logo">
         <img src="{{ asset('logo.png') }}" alt="Logo" width="240" height="54">
     </div>
