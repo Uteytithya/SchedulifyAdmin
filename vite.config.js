@@ -10,6 +10,9 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        https: process.env.NODE_ENV === 'production',
+    },
     css: {
         postcss: {
             plugins: [
