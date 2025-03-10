@@ -2,8 +2,9 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "dev": "vite",
         "build": "vite build",
-        "dev": "vite"
+        "railway:build": "npm run build"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.20",

@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer'; // Import it directly like this
 
 export default defineConfig({
     plugins: [
@@ -8,8 +10,12 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    build: {
-        outDir: 'public/build',
-        emptyOutDir: true,
-    }
+    css: {
+        postcss: {
+            plugins: [
+                tailwindcss(),
+                autoprefixer(), // Use the imported variable
+            ],
+        },
+    },
 });
