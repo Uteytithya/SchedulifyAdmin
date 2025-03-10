@@ -14,7 +14,7 @@ abstract class BaseService
 
     public function create(array $params = array())
     {
-        $query = $this->getQuery();
+        $query = $this->getQuery(); 
 
         if (isset($query)) {
             $data = $query->create($params);

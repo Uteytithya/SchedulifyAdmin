@@ -48,6 +48,7 @@ class SessionRequestController extends BaseAPI
             $params['requested_date'] = $request->requested_date;
             $params['new_start_time'] = $request->new_start_time;
             $params['new_end_time'] = $request->new_end_time;
+            $params['request_type'] = $request->request_type;
             $params['reason'] = $request->reason;
             $params['status'] = $request->status;
             $data = $this->SessionRequestService->createRequest($params);

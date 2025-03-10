@@ -8,4 +8,14 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        hmr: {
+            host: 'https://schedulifyadmin-production.up.railway.app',
+            protocol: 'wss',
+        },
+    },
+    build: {
+        outDir: 'public/build',
+        emptyOutDir: true,
+    }
 });

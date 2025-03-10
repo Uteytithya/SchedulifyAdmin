@@ -15,7 +15,7 @@ class RequestSV extends BaseService
     public function createRequest($params){
         try {
             $request = $this->create($params);
-            return $request->fresh(['user_id', 'session_type_id', 'course_id', 'timetable_id', 'requested_date', 'new_start_time', 'new_end_time', 'reason', 'status', 'created_at']);
+            return $request->fresh(['user', 'sessionType', 'timetable']);
         } catch (Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
         }
