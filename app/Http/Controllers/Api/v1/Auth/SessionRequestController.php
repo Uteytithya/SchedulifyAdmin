@@ -4,11 +4,20 @@ namespace App\Http\Controllers\Api\v1\Auth;
 
 use App\Http\Controllers\Api\v1\BaseAPI;
 use App\Models\SessionRequest;
+use App\Services\RequestSV;
+use Exception;
 use Illuminate\Http\Request;
 
 
 class SessionRequestController extends BaseAPI
 {
+    private $SessionRequestService;
+
+    public function __construct()
+    {
+        $this->SessionRequestService = new RequestSV();
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -30,7 +39,22 @@ class SessionRequestController extends BaseAPI
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $params = [];
+            $params['user_id'] = $request->user_id;
+            $params['session_type_id'] = $request->session_type_id;
+            $params['course_id'] = $request->course_id;
+            $params['timetable_id'] = $request->timetable_id;
+            $params['requested_date'] = $request->requested_date;
+            $params['new_start_time'] = $request->new_start_time;
+            $params['new_end_time'] = $request->new_end_time;
+            $params['reason'] = $request->reason;
+            $params['status'] = $request->status;
+            $data = $this->SessionRequestService->createRequest($params);
+            return $this->successResponse($data, "Create Request Successfully!");
+        } catch (Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
     }
 
     /**

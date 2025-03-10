@@ -26,6 +26,6 @@ class SessionRequest extends Model
 
     public function timetable()
     {
-        return $this->belongsTo(Timetable::class, 'timetable_id');
+        return $this->belongsTo(Timetables::class, 'timetable_id');
     }
 }
