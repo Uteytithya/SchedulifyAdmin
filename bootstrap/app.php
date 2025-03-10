@@ -35,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return route('admin.login');
             }
         });
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
