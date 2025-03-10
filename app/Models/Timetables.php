@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\UuidTrait;
 use App\Models\StudentGroup;
 
-class Timetable extends Model
+class Timetables extends Model
 {
     use HasFactory, UuidTrait;
 

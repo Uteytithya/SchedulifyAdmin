@@ -24,31 +24,31 @@ abstract class BaseService
         }
     }
 
-    public function update(array $params = array(), String $global_id = null)
+    public function update(array $params = array(), String $id = null)
     {
         $query = $this->getQuery();
 
         if (isset($query)) {
-            $data = $query->where('global_id', $global_id)->first();
+            $data = $query->where('id', $id)->first();
             if (isset($data)) {
                 $data->update($params);
                 return $data;
             } else {
-                throw new Exception("Record " . $global_id . " not found in model " . $query->getModel()::class . "");
+                throw new Exception("Record " . $id . " not found in model " . $query->getModel()::class . "");
             }
         } else {
             throw new Exception('Query not found');
         }
     }
 
-    public function getByGlobalId(String $global_id, $query)
+    public function getByGlobalId(String $id, $query)
     {
         if (isset($query)) {
-            $data = $query->where('global_id', $global_id)->first();
+            $data = $query->where('id', $id)->first();
             if (isset($data)) {
                 return $data;
             } else {
-                throw new Exception("Record " . $global_id . " not found in " . $query->getModel()::class ?? '' . "");
+                throw new Exception("Record " . $id . " not found in " . $query->getModel()::class ?? '' . "");
             }
         } else {
             throw new Exception('Query not found');
@@ -59,41 +59,59 @@ abstract class BaseService
     {
         if ($query === null) {
             $query = $this->getQuery();
+            if (!$query) {
+                throw new Exception('Query not found');
+            }
         }
 
-        $limit    = $params['limit'] ?? 10;
-        $page     = $params['page'] ?? 1;
+        $limit    = isset($params['limit']) && is_numeric($params['limit']) ? (int) $params['limit'] : 10;
+        $page     = isset($params['page']) && is_numeric($params['page']) ? (int) $params['page'] : 1;
         $orderBy  = $params['order_by'] ?? 'asc';
-        $filterBy = $params['filter_by'] ?? null;
+        $filterBy = $params['filter_by'] ?? [];
         $search   = $params['search'] ?? null;
         $columns  = $params['columns'] ?? null;
 
         // Calculate the offset based on the page number and limit
         $offset = ($page - 1) * $limit;
 
-        // Order by created_at desc by default
-        if ($query) {
+        // Ensure ordering by 'created_at' exists
+        if (!isset($query->getQuery()->orders)) {
             $query = $query->orderBy('created_at', $orderBy);
-        } else {
-            throw new Exception('Query not found');
         }
 
-        if (isset($search)) {
-            $query = $query->where($columns, 'like', '%' . $search . '%');
+        // Apply search filter
+        if (!empty($search) && !empty($columns)) {
+            if (is_array($columns)) {
+                $query->where(function ($q) use ($columns, $search) {
+                    foreach ($columns as $column) {
+                        $q->orWhere($column, 'like', '%' . $search . '%');
+                    }
+                });
+            } else {
+                $query->where($columns, 'like', '%' . $search . '%');
+            }
         }
 
         // Apply other filters
-        if (isset($filterBy)) {
-            foreach ($filterBy as $column => $value) {
+        foreach ($filterBy as $column => $value) {
+            if (!empty($column) && $value !== null) {
                 $query = $query->where($column, $value);
             }
         }
 
-        // Count total records without applying limit and offset
+        // Count total records
         $total = $query->count();
 
+        // If total records are less than offset, reset page to 1
+        if ($total <= $offset) {
+            $page = 1;
+            $offset = 0;
+        }
+
         // Apply limit and offset for pagination
-        $query = $query->skip($offset)->take($limit);
+        if ($limit > 0) {
+            $query = $query->skip($offset)->take($limit);
+        }
 
         // Retrieve the data for the current page
         $data = $query->get();
@@ -101,14 +119,15 @@ abstract class BaseService
         return [$data, $total, $limit, $page];
     }
 
-    // Get id by global_id
-    public function getIdByGlobalId($modelName, $global_id)
+
+    // Get id by id
+    public function getIdByGlobalId($modelName, $id)
     {
         $model = new $modelName();
         $query = $model->getQuery();
 
         if (isset($query)) {
-            $data = $query->where('global_id', $global_id)->first();
+            $data = $query->where('id', $id)->first();
 
             $dataId = $data ? $data->id : null;
             return $dataId;
@@ -118,10 +137,11 @@ abstract class BaseService
     }
 
     // Activate and Deactivate a record
-    public function activate($global_id, $query) {
+    public function activate($id, $query)
+    {
 
         if (isset($query)) {
-            $data = $query->where('global_id', $global_id)->first();
+            $data = $query->where('id', $id)->first();
             $data->update([
                 'is_active' => !$data->is_active
             ]);

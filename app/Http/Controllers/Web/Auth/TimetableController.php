@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Timetable;
+use App\Models\Timetables;
 
 class TimetableController extends Controller
 {
@@ -35,7 +35,7 @@ class TimetableController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Timetable $timetable)
+    public function show(Timetables $timetable)
     {
         //
     }
@@ -43,7 +43,7 @@ class TimetableController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Timetable $timetable)
+    public function edit(Timetables $timetable)
     {
         //
     }
@@ -51,7 +51,7 @@ class TimetableController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Timetable $timetable)
+    public function update(Request $request, Timetables $timetable)
     {
         //
     }
@@ -59,7 +59,7 @@ class TimetableController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Timetable $timetable)
+    public function destroy(Timetables $timetable)
     {
         //
     }

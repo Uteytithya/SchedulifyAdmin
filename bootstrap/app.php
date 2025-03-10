@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,9 +25,16 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->redirectGuestsTo(fn () => route('admin.login'));
+        $middleware->redirectGuestsTo(function () {
+            if (Request::is('api/*')) {
+                return abort(response()->json([
+                    'message' => 'Unauthorized access. Please log in.'
+                ], Response::HTTP_UNAUTHORIZED));
+            }
+
+            return route('admin.login'); // Redirect web users to admin login page
+        });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
-

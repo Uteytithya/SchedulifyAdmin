@@ -16,6 +16,6 @@ class StudentGroup extends Model
 
     public function timetables()
     {
-        return $this->hasMany(Timetable::class, 'group_id');
+        return $this->hasMany(Timetables::class, 'group_id');
     }
 }
