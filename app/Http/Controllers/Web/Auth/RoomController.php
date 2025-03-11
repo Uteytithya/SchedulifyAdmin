@@ -40,7 +40,7 @@ class RoomController extends Controller
 
         Room::create($incomingFields);
 
-        return redirect()->route('admin.rooms.index')->with('success', 'Room created successfully!');
+        return redirect()->route('admin.rooms_index')->with('success', 'Room created successfully!');
     }
 
     /**
@@ -68,7 +68,7 @@ class RoomController extends Controller
 
         $room->update($request->all());
 
-        return redirect()->route('admin.rooms.index')->with('success', 'Room updated successfully!');
+        return redirect()->route('admin.rooms_index')->with('success', 'Room updated successfully!');
     }
 
     /**
@@ -77,7 +77,6 @@ class RoomController extends Controller
     public function destroy(Room $room)
     {
         $room->delete();
-
-        return redirect()->route('admin.rooms.index')->with('success', 'Room deleted successfully!');
+        return redirect()->route('admin.rooms_index')->with('success', 'Room deleted successfully!');
     }
 }

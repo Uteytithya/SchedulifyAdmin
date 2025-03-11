@@ -24,7 +24,7 @@ class CourseController extends Controller
     public function showCreate(){
         return view ('admin.create-course');
     }
-    
+
 
     //create a new course
     public function create(Request $request)
@@ -60,7 +60,7 @@ class CourseController extends Controller
     public function edit(Course $course,Request $request)
     {
         return view('admin.edit-course',['course'=>$course]);
-        
+
     }
 
     /**
@@ -73,7 +73,7 @@ class CourseController extends Controller
             'credit'=>'required'
         ]);
         $course->update($incomingFields);
-        return redirect('/');
+        return redirect()->route('admin.course');
     }
 
     /**

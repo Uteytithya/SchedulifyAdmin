@@ -3,17 +3,35 @@
 namespace App\Http\Controllers\Api\v1\Auth;
 
 use App\Models\StudentGroup;
+use App\Services\StudentGroupSV;
+use App\Services\TimetableSV;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\v1\BaseAPI;
 
 class StudentsGroupController extends BaseAPI
 {
+    private $StudentGroupService;
+    public function __construct()
+    {
+        $this->StudentGroupService = new StudentGroupSV();
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $params = [];
+            // $params['status'] = $request->boolean("status");
+            $params['order_by'] = $request->order_by;
+            $params['filter_by'] = $request->filter_by;
+            $params['search'] = $request->search;
+            $params['columns'] = $request->columns;
+            $data = $this->StudentGroupService->getAllStudentGroups($params);
+            return $this->successResponse($data, 'Get all student group successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
     }
 
     /**
@@ -35,9 +53,14 @@ class StudentsGroupController extends BaseAPI
     /**
      * Display the specified resource.
      */
-    public function show(StudentGroup $students_group)
+    public function show(StudentGroup $students_group, String $id)
     {
-        //
+        try {
+            $data = $this->StudentGroupService->getStudentGroupById($id);
+            return $this->successResponse($data, "get student group by id successfully");
+        }catch (\Exception $e){
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
     }
 
     /**
