@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Auth\StudentsGroupController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\Auth\CourseController;
 use App\Http\Controllers\Web\Auth\AdminAuthController;
+use App\Http\Controllers\Web\Auth\TimetableController;
 
 /*///////////////////////////////////////////
 *
@@ -47,4 +48,12 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get('course/edit/{course}', [CourseController::class, 'edit'])->name('course_edit');
     Route::put('course/edit/{course}', [CourseController::class, 'update'])->name('course_edit_post');
     Route::delete('course/edit/{course}', [CourseController::class, 'destroy'])->name('course_delete_post');
+
+    Route::get('timetable', [TimetableController::class, 'index'])->name('timetable_index');
+    Route::get('timetable/create', [TimetableController::class, 'create'])->name('timetable_create');
+    Route::post('timetable/create', [TimetableController::class, 'store'])->name('timetable_create_post');
+    Route::get('timetable/edit/{timetable}', [TimetableController::class, 'edit'])->name('timetable_edit');
+    Route::put('timetable/edit/{timetable}', [TimetableController::class, 'update'])->name('timetable_edit_post');
+    Route::delete('timetable/edit/{timetable}', [TimetableController::class, 'destroy'])->name('timetable_delete_post');
+    
 });
