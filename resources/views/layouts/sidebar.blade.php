@@ -24,14 +24,14 @@
       </li>
 
       <li>
-        <a href="/classes" class="{{ request()->is('classes') ? $activeStyle : '' }} {{$style}}">
+        <a href="/classes" class="{{ request()->is('classes*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-inbox"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Classes</span>
          </a>
       </li>
 
       <li>
-        <a href="/timetables" class="{{ request()->is('timetables') ? $activeStyle : '' }} {{$style}}">
+        <a href="/timetables" class="{{ request()->is('timetables*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-calendar"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Timetables</span>
          </a>
@@ -39,7 +39,7 @@
 
 
       <li>
-        <a href="/requests" class="{{ request()->is('requests') ? $activeStyle : '' }} {{$style}}">
+        <a href="/requests" class="{{ request()->is('requests*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-comment-dots"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Requests</span>
          </a>
@@ -48,7 +48,7 @@
 
 
       <li>
-        <a href="/users" class="{{ request()->is('users') ? $activeStyle : '' }} {{$style}}">
+        <a href="/users" class="{{ request()->is('users*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-user"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
          </a>
