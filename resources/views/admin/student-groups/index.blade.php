@@ -16,7 +16,7 @@
             </select>
 
             <!-- Create New Button -->
-            <a href="{{ route('admin.student-groups.create') }}" class="bg-blue-500 text-white p-2 rounded-lg">
+            <a href="{{ route('admin.student-groups_create') }}" class="bg-blue-500 text-white p-2 rounded-lg">
                 Create New
             </a>
         </div>
@@ -41,7 +41,7 @@
                 let query = $(this).val();
 
                 $.ajax({
-                    url: "{{ route('admin.student-groups.search') }}", // ✅ Correct route
+                    url: "{{ route('admin.student-groups_search') }}", // ✅ Correct route
                     type: "GET",
                     data: { query: query },
                     success: function (response) {
@@ -63,7 +63,7 @@
             // Function to Fetch Data via AJAX
             function fetchGroups(query, sort) {
                 $.ajax({
-                    url: "{{ route('admin.student-groups.search') }}",
+                    url: "{{ route('admin.student-groups_search') }}",
                     type: "GET",
                     data: { query: query, sort: sort },
                     success: function (data) {

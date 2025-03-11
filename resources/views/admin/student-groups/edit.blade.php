@@ -4,7 +4,7 @@
     <div class="container mx-auto p-6">
         <h2 class="text-2xl font-semibold mb-4">Edit Student Group</h2>
 
-        <form action="{{ route('admin.student-groups.update', $student_group->id) }}" method="POST">
+        <form action="{{ route('admin.student-groups_update', $student_group->id) }}" method="POST">
             @csrf
             @method('PUT')
 

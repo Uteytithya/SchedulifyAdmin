@@ -4,7 +4,7 @@
     <div class="container mx-auto px-4 py-6 bg-white w-full max-w-6xl">
         <h1 class="text-2xl font-bold mb-6">Edit Room</h1>
 
-        <form action="{{ route('admin.rooms.update', $room->id) }}" method="POST" class="space-y-4">
+        <form action="{{ route('admin.rooms_update', $room->id) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
             <label class="block">Room Name:</label>

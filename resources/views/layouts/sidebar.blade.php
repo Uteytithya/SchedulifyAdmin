@@ -17,7 +17,7 @@
       </li>
 
       <li>
-         <a href="{{route('admin.course')}}" class="{{ request()->is('admin/*') ? $activeStyle : '' }} {{$style}}">
+         <a href="{{route('admin.course')}}" class="{{ request()->is('admin/course/*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-book-open-reader"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Courses</span>
          </a>
@@ -56,7 +56,7 @@
 
 
       <li>
-        <a href="/groups" class="{{ request()->is('groups') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route('admin.student-groups_index')}}" class="{{ request()->is('admin/student-groups/*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-users"></i>
             <span class="flex-1 ms-2 whitespace-nowrap">Groups</span>
          </a>
