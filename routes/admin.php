@@ -33,6 +33,7 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('rooms_edit'); // Show edit form
     Route::put('/rooms/{room}', [RoomController::class, 'update'])->name('rooms_update'); // Update room
     Route::delete('/rooms/{room}', [RoomController::class, 'destroy'])->name('rooms_destroy'); // Delete room
+    Route::get('/rooms/search', [RoomController::class, 'search'])->name('rooms_search');
 //    working the student group
     Route::get('/student-groups', [StudentsGroupController::class, 'index'])->name('student-groups_index');
     Route::get('/student-groups/create', [StudentsGroupController::class, 'create'])->name('student-groups_create');

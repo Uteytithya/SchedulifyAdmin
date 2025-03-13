@@ -11,10 +11,29 @@ class RoomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-//        $rooms = Room::all(); // Fetch all rooms from the database
-        $rooms = Room::paginate(2);
+        $query = Room::query();
+
+        if ($request->has('query')) {
+            $query->where('name', 'like', '%' . $request->query . '%');
+        }
+
+        if ($request->has('sort')) {
+            $query->orderBy($request->sort, 'asc');
+        } else {
+            $query->orderBy('name', 'asc');
+        }
+
+        $rooms = $query->paginate(2);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'table' => view('admin.rooms.partials.table', compact('rooms'))->render(),
+                'pagination' => $rooms->links()->render(),
+            ]);
+        }
+
         return view('admin.rooms.index', compact('rooms'));
     }
 
@@ -78,5 +97,29 @@ class RoomController extends Controller
     {
         $room->delete();
         return redirect()->route('admin.rooms_index')->with('success', 'Room deleted successfully!');
+    }
+    public function search(Request $request)
+    {
+        $query = Room::query();
+
+        // Search by name
+        if ($request->has('query') && !empty($request->query('query'))) {
+            $query->where('name', 'like', '%' . $request->query('query') . '%');
+        }
+
+        // Sorting
+        if ($request->has('sort') && in_array($request->sort, ['name', 'floor', 'capacity'])) {
+            $query->orderBy($request->sort, 'asc');
+        } else {
+            $query->orderBy('name', 'asc'); // Default sorting
+        }
+
+        // Paginate results
+        $rooms = $query->paginate(2);
+
+        return response()->json([
+            'table' => view('admin.rooms.partials.table', compact('rooms'))->render(),
+            'pagination' => $rooms->links()->render(),
+        ]);
     }
 }
