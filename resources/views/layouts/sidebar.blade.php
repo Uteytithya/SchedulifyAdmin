@@ -24,7 +24,7 @@
       </li>
 
       <li>
-        <a href="/classes" class="{{ request()->is('classes*') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route("admin.rooms_index")}}" class="{{ request()->is('classes*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-inbox"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Classes</span>
          </a>
@@ -48,7 +48,7 @@
 
 
       <li>
-        <a href="/users" class="{{ request()->is('users*') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route("admin.users.index")}}" class="{{ request()->is('users*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-user"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
          </a>
@@ -59,14 +59,6 @@
         <a href="{{route('admin.student-groups_index')}}" class="{{ request()->is('admin/student-groups/*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-users"></i>
             <span class="flex-1 ms-2 whitespace-nowrap">Groups</span>
-         </a>
-      </li>
-
-
-      <li>
-        <a href="/settings" class="{{ request()->is('settings') ? $activeStyle : '' }} {{$style}}">
-            <i class="fa-solid fa-gear"></i>
-            <span class="flex-1 ms-2 whitespace-nowrap">Settings</span>
          </a>
       </li>
    </ul>
