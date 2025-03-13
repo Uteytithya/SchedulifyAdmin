@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Auth\UserController;
 use App\Http\Controllers\Web\Auth\RoomController;
 use App\Http\Controllers\Web\Auth\StudentsGroupController;
 use Illuminate\Support\Facades\Route;
@@ -47,4 +48,11 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get('course/edit/{course}', [CourseController::class, 'edit'])->name('course_edit');
     Route::put('course/edit/{course}', [CourseController::class, 'update'])->name('course_edit_post');
     Route::delete('course/edit/{course}', [CourseController::class, 'destroy'])->name('course_delete_post');
+
+    Route::get("user", [UserController::class, 'index'])->name('users.index');
+    Route::get("user/create", [UserController::class, 'create'])->name('users.create');
+    Route::post("user/create", [UserController::class, 'store'])->name('users.store');
+    Route::get("user/edit/{user}", [UserController::class, 'edit'])->name('users.edit');
+    Route::put("user/edit/{user}", [UserController::class, 'update'])->name('users.update');
+    Route::delete("user/edit/{user}", [UserController::class, 'destroy'])->name('users.delete');
 });

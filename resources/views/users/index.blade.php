@@ -11,10 +11,10 @@
             <p class="font-bold">User ></p>
             <p>List </p>
         </span>
-        
+
         <div class="flex justify-between items-center mb-6 mt-2">
             <h1 class="text-3xl font-semibold">User List</h1>
-            <a href="{{ route('users.create') }}" class="inline-block bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition-colors">
+            <a href="{{ route('admin.users.create') }}" class="inline-block bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition-colors">
                 Create User
             </a>
         </div>
@@ -41,13 +41,13 @@
                             <td class="px-4 py-4">{{ $user->email }}</td>
                             <td class="px-4 py-4">{{ $user->role }}</td>
                             <td class="px-4 py-4">
-                                <a href="{{ route('users.edit', $user->id) }}" class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-pen-to-square"></i></a>
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline-block ml-2" id="delete-form-{{ $user->id }}">
+                                <a href="{{ route('admin.users.edit', $user->id) }}" class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" class="inline-block ml-2" id="delete-form-{{ $user->id }}">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmDelete('{{ $user->id }}')">
                                         <i class="fa-solid fa-trash"></i>
-                                    </button>                                    
+                                    </button>
                                 </form>
                             </td>
                         </tr>
