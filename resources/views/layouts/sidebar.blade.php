@@ -10,7 +10,7 @@
 
    <ul class="space-y-5 font-medium p-2">
       <li>
-         <a href="/" class="{{ request()->is('/') ? $activeStyle : '' }} {{$style}}">
+         <a href="/admin/auth/dashboard" class="{{ request()->is('admin/auth/dashboard*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-house"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
         </a>
@@ -24,7 +24,7 @@
       </li>
 
       <li>
-        <a href="{{route("admin.rooms_index")}}" class="{{ request()->is('classes*') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route("admin.rooms_index")}}" class="{{ request()->is('admin/auth/rooms*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-inbox"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Classes</span>
          </a>
@@ -48,7 +48,7 @@
 
 
       <li>
-        <a href="{{route("admin.users.index")}}" class="{{ request()->is('users*') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route("admin.users.index")}}" class="{{ request()->is('admin/auth/user*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-user"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
          </a>
@@ -56,7 +56,7 @@
 
 
       <li>
-        <a href="{{route('admin.student-groups_index')}}" class="{{ request()->is('admin/student-groups/*') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route('admin.student-groups_index')}}" class="{{ request()->is('admin/auth/student-groups*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-users"></i>
             <span class="flex-1 ms-2 whitespace-nowrap">Groups</span>
          </a>
