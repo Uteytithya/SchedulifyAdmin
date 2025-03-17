@@ -21,26 +21,21 @@ class ScheduleSessionController extends BaseAPI
     }
     public function index(Request $request)
     {
-        try{
+        try {
             $params = [];
-        $params['timetable_id'] = $request->timetable_id;
-        $params['course_user_id'] = $request->course_user_id;
-        $params['room_id'] = $request->room_id;
-        $params['day'] = $request->day;
-        $params['start_time'] = $request->start_time;
-        $params['end_time'] = $request->end_time;
-        $params['status'] = $request->status;
-        $params['session_type_id'] = $request->session_type_id;
-        $params['created_at'] = $request->created_at;
-        $data = $this->ScheduleSession->getAllScheduleSessions($params);
-        return $this->successResponse($data,'Get all Schedule successfully');
-        }catch(\Exception $e){
-            return $this->errorResponse($e->getMessage(),$e->getcode());
+            $params['timetable_id'] = $request->timetable_id;
+            $params['course_user_id'] = $request->course_user_id;
+            $params['room_id'] = $request->room_id;
+            $params['day'] = $request->day;
+            $params['start_time'] = $request->start_time;
+            $params['end_time'] = $request->end_time;
+            $params['status'] = $request->status;
+            $params['session_type_id'] = $request->session_type_id;
+            $data = $this->ScheduleSession->getAllScheduleSessions($params);
+            return $this->successResponse($data, 'Get all Schedule successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getcode());
         }
-        
-       
-        
-
     }
 
     /**
