@@ -51,6 +51,42 @@ class GroupSeeder extends Seeder
                 'generation_year' => 3,
                 'department' => 'CS',
             ],
+            [
+                'id' => Str::uuid(),
+                'name' => 'CS-GEN-10-G1',
+                'generation_year' => 3,
+                'department' => 'CS',
+            ],
+            [
+                'id' => Str::uuid(),
+                'name' => 'CS-GEN-10-G2',
+                'generation_year' => 3,
+                'department' => 'CS',
+            ],
+            [
+                'id' => Str::uuid(),
+                'name' => 'CS-GEN-10-G3',
+                'generation_year' => 3,
+                'department' => 'CS',
+            ],
+            [
+                'id' => Str::uuid(),
+                'name' => 'CS-GEN-10-G4',
+                'generation_year' => 3,
+                'department' => 'CS',
+            ],
+            [
+                'id' => Str::uuid(),
+                'name' => 'CS-GEN-10-G5',
+                'generation_year' => 3,
+                'department' => 'CS',
+            ],
+            [
+                'id' => Str::uuid(),
+                'name' => 'CS-GEN-10-G6',
+                'generation_year' => 3,
+                'department' => 'CS',
+            ],
         ]);
     }
 }
