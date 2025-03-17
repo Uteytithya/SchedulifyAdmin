@@ -15,7 +15,7 @@ class TimetableSV extends BaseService
     public function getAllTimetables(array $params = array())
     {
         try {
-            $timetable = $this->getAll();
+            $timetable = $this->getAll($params);
             return $timetable;
         } catch (Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
