@@ -15,7 +15,7 @@ class ScheduleSession extends Model
 
     public function timetable()
     {
-        return $this->belongsTo(Timetable::class);
+        return $this->belongsTo(Timetables::class);
     }
 
     public function room()
