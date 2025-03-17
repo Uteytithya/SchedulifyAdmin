@@ -43,12 +43,14 @@ class AuthSV
         }
 
         $guard = $role === 'user' ? 'api' : 'admin';
-
-        if (!$token = Auth::guard($guard)->attempt($credentials)) {
+        if (!$token = Auth::guard($guard)->claims([
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ])->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        return $this->respondWithToken($token, $user, $guard);
+        return $this->respondWithToken($token, $guard);
     }
 
     /**
@@ -112,15 +114,12 @@ class AuthSV
     /**
      * Get the token array structure.
      */
-    protected function respondWithToken($token, $user = null, $role)
+    protected function respondWithToken($token, $guard)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'data' => [
-                'user' => $user,
-            ],
-            'expires_in_second' => Auth::guard($role)->factory()->getTTL() * 60
+            'expires_in_second' => Auth::guard($guard)->factory()->getTTL() * 60
         ]);
     }
 
