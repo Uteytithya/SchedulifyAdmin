@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
-    return view('home');
+    return redirect()->route("admin.login");
 });
-
-Route::resource('users', UserController::class);
 

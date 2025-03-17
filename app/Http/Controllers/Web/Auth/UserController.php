@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web\Auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -44,7 +45,7 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect()->route('users.index')->with('success', 'User created successfully');
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully');
     }
 
     /**
@@ -63,7 +64,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         return view('users.edit', compact('user'));
     }
-    
+
     /**
      * Update the specified resource in storage.
      */
@@ -71,7 +72,7 @@ class UserController extends Controller
     {
         // Find the user
         $user = User::findOrFail($id);
-    
+
         // Validate input
         $validated = $request->validate([
             'name' => 'required',
@@ -79,28 +80,28 @@ class UserController extends Controller
             'password' => 'nullable|min:6',
             'role' => 'required',
         ]);
-    
+
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->role = $validated['role'];
-    
-      
+
+
         if ($validated['password']) {
             $user->password = bcrypt($validated['password']);
         }
 
         $user->save();
-        return redirect()->route('users.index')->with('success', 'User updated!');
+        return redirect()->route('admin.users.index')->with('success', 'User updated!');
     }
-    
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id); 
-        $user->delete(); 
+        $user = User::findOrFail($id);
+        $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }
