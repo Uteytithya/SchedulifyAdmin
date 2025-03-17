@@ -5,7 +5,6 @@ use App\Http\Controllers\Web\Auth\StudentsGroupController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\Auth\CourseController;
 use App\Http\Controllers\Web\Auth\AdminAuthController;
-
 /*///////////////////////////////////////////
 *
 *           PUBLIC API

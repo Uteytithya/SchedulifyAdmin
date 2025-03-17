@@ -18,5 +18,6 @@ class Room extends Model
     public function sessions()
     {
         return $this->hasMany(ScheduleSession::class, 'room_id');
+        
     }
 }
