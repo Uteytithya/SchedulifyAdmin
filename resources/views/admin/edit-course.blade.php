@@ -35,6 +35,8 @@
 
             <button type="submit"
                 class="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mt-5">Update</button>
+            <a href="{{ route('admin.course') }}"
+                class="bg-red-500 text-white px-4 py-2 inline-block text-center rounded-md ml-2">Cancel</a>
         </form>
     </div>
 </div>
