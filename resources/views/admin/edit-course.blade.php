@@ -2,7 +2,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-6 max-w-7xl mt-20">
     <span class="text-md text-gray-500 flex gap-1 ">
-        <a class="font-bold" href="/users">Course ></a>
+        <a class="font-bold" href="{{Route('admin.course') }}">Course ></a>
         <p>Edit </p>
     </span>
     <h1 class="text-3xl font-semibold mt-2">Edit Course</h1>
