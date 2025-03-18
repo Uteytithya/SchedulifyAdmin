@@ -6,7 +6,7 @@
         <x-toast :message="session('success')" :type="'success'" />
     @endif
 
-    <div class="container mx-auto px-4 py-6 max-w-7xl mt-20">
+    <div class="container mx-auto p-6 mt-5">
         <!-- Breadcrumb -->
         <span class="text-md text-gray-500 flex gap-1">
             <p class="font-bold">Rooms ></p>
@@ -40,7 +40,8 @@
                     <th class="px-4 py-3 text-left">Floor</th>
                     <th class="px-4 py-3 text-left">Capacity</th>
                     <th class="px-4 py-3 text-left">Status</th>
-                    <th class="px-4 py-3 text-center">Actions</th>
+                    <th class="px-4 py-3 text-center">Edit</th>
+                    <th class="px-4 py-3 text-center">Delete</th>
                 </tr>
                 </thead>
                 <tbody id="room-results">
