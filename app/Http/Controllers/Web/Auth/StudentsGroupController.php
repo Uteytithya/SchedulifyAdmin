@@ -49,9 +49,7 @@ class StudentsGroupController extends Controller
         } else {
             $query->orderBy('created_at', 'desc'); // Default sorting
         }
-
         $groups = $query->paginate(5); // Pagination
-
         return view(('admin.student-groups.index'), compact('groups'));
     }
 
@@ -69,7 +67,7 @@ class StudentsGroupController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:students_groups,name',
+            'name' => ['required|string|unique:students_groups,name'],
             'generation_year' => 'required|integer',
             'department' => 'required|string',
         ]);

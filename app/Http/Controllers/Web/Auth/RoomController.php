@@ -79,10 +79,10 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'floor' => 'required|integer',
-            'capacity' => 'required|integer',
-            'is_active' => 'required|boolean',
+            'name' => ['required', Rule::unique('rooms', 'name')],
+            'floor' => ['required'],
+            'capacity' => ['required', 'integer'],
+            'is_active' => ['required', 'boolean']
         ]);
 
         $room->update($request->all());

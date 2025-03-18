@@ -36,9 +36,9 @@
             <table class="min-w-full table-auto">
                 <thead class="bg-gray-200">
                 <tr class="border-b border-gray-300">
-                    <th class="px-4 py-3 text-left">
-                        <input type="checkbox">
-                    </th>
+{{--                    <th class="px-4 py-3 text-left">--}}
+{{--                        <input type="checkbox">--}}
+{{--                    </th>--}}
                     <th class="px-4 py-3 text-left">Name</th>
                     <th class="px-4 py-3 text-left">Generation</th>
                     <th class="px-4 py-3 text-left">Department</th>

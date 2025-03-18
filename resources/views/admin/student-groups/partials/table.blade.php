@@ -1,6 +1,6 @@
 @foreach($groups as $group)
     <tr class="border-b">
-        <td class="p-4"><input type="checkbox"></td>
+{{--        <td class="p-4"><input type="checkbox"></td>--}}
         <td class="p-4">{{ $group->name }}</td>
         <td class="p-4">{{ $group->generation_year }}</td>
         <td class="p-4">{{ $group->department }}</td>

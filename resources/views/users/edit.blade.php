@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-6 max-w-7xl mt-20">
     <span class="text-md text-gray-500 flex gap-1 ">
-        <a class="font-bold" href="/users">User ></a>
+        <a class="font-bold" href="{{route('admin.users.index')}}">User ></a>
         <p>Edit </p>
     </span>
     <h1 class="text-3xl font-semibold mt-2">Edit User</h1>
@@ -55,6 +55,7 @@
             </div>
 
             <button type="submit" class="focus:outline-none text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mt-5">Update</button>
+            <a href="{{ route('admin.users.index') }}" class="bg-red-500 text-white px-4 py-2 inline-block text-center rounded-md">Cancel</a>
         </form>
     </div>
 </div>
