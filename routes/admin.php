@@ -42,9 +42,9 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::delete('/student-groups/{group}', [StudentsGroupController::class, 'destroy'])->name('student-groups_destroy');
     Route::get('/search-groups', [StudentsGroupController::class, 'search'])->name('student-groups_search');
 
-    Route::get('course', [CourseController::class, 'show'])->name('course');
-    Route::get('course/create', [CourseController::class, 'showCreate'])->name('course_create');
-    Route::post('course/create', [CourseController::class, 'create'])->name('course_create_post');
+    Route::get('course', [CourseController::class, 'index'])->name('course');
+    Route::get('course/create', [CourseController::class, 'create'])->name('course_create');
+    Route::post('course/create', [CourseController::class, 'store'])->name('course_create_post');
     Route::get('course/edit/{course}', [CourseController::class, 'edit'])->name('course_edit');
     Route::put('course/edit/{course}', [CourseController::class, 'update'])->name('course_edit_post');
     Route::delete('course/edit/{course}', [CourseController::class, 'destroy'])->name('course_delete_post');

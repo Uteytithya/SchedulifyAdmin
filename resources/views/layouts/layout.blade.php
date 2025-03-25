@@ -31,19 +31,19 @@
 
 <body class="bg-gray-100 font-sans antialiased">
     <!-- Header Section -->
-    <header class="bg-white shadow-md">
+    <header class="bg-white shadow-md sticky z-[50] top-0">
         @include('layouts.header')
     </header>
 
     <!-- Main Layout Section -->
     <div class="flex h-screen">
         <!-- Sidebar Section -->
-        <aside class="w-64  text-white space-y-4">
+        <aside class="w-64 text-white space-y-4">
             @include('layouts.sidebar')
         </aside>
 
         <!-- Main Content Section -->
-        <main class="flex-1 ">
+        <main class="flex-1">
             @yield('content')
         </main>
     </div>
