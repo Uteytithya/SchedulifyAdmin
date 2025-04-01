@@ -5,15 +5,32 @@ namespace App\Http\Controllers\Api\v1\Auth;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\v1\BaseAPI;
+use App\Services\RoomSV;
 
 class RoomController extends BaseAPI
 {
+    protected $Room; // Service instance
+
+    public function __construct(RoomSV $roomSV)
+    {
+        $this->Room = $roomSV;
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $params = [];
+            $params['order_by'] = $request->order_by;
+            $params['filter_by'] = $request->filter_by;
+            $params['search'] = $request->search;
+            $params['columns'] = $request->columns;
+            $data = $this->Room->getAllRooms($params);
+            return $this->successResponse($data, 'Get all Schedule successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getcode());
+        }
     }
 
     /**
