@@ -15,26 +15,14 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
+        $courses = Course::paginate(5);
+        return view('admin.courses.course-view', ['courses' => $courses]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function showCreate(){
-        return view ('admin.create-course');
-    }
-
 
     //create a new course
     public function create(Request $request)
     {
-        $incomingFields = $request->validate([
-            'name'=>'required',
-            'credit'=>'required'
-        ]);
-        Course::create($incomingFields);
-        return redirect()->route('admin.course');
+        return view('admin.courses.create-course');
     }
 
     /**
@@ -42,25 +30,25 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $incomingFields = $request->validate([
+            'name' => 'required',
+            'credit' => 'required'
+        ]);
+        Course::create($incomingFields);
+        return redirect()->route('admin.course');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(course $course)
-    {
-        $courses=Course::all();
-        return view('admin.course-view',['courses'=>$courses]);
-    }
+    public function show(course $course) {}
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Course $course,Request $request)
+    public function edit(Course $course, Request $request)
     {
-        return view('admin.edit-course',['course'=>$course]);
-
+        return view('admin.courses.edit-course', ['course' => $course]);
     }
 
     /**
@@ -69,8 +57,8 @@ class CourseController extends Controller
     public function update(Request $request, course $course)
     {
         $incomingFields = $request->validate([
-            'name'=>'required',
-            'credit'=>'required'
+            'name' => 'required',
+            'credit' => 'required'
         ]);
         $course->update($incomingFields);
         return redirect()->route('admin.course');

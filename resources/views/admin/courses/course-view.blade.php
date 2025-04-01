@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 @section('content')
-    <div class="container mx-auto px-4 py-6 max-w-7xl mt-20">
+    <div class="container mx-auto p-6 mt-5">
         <span class="text-md text-gray-500 flex gap-1 ">
             <p class="font-bold">Course ></p>
             <p>List </p>
@@ -18,10 +18,11 @@
         <div class="flex items-center ml-auto space-x-4 mb-4">
             <form class="relative flex items-center bg-[#E9F5FE] p-1 rounded-lg w-72 md:w-96 border-solid border-2">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 text-gray-400"></i>
-                <input class="pl-10 pr-4 py-2 bg-transparent focus:outline-none w-full" placeholder="Search..." name="search">
+                <input class="pl-10 pr-4 py-2 bg-transparent focus:outline-none w-full" placeholder="Search..."
+                    name="search">
             </form>
         </div>
-        
+
 
 
 
@@ -61,6 +62,10 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <!-- Pagination -->
+        <div class="mt-4" id="pagination">
+            {{ $courses->links() }}
         </div>
     </div>
 @endsection
