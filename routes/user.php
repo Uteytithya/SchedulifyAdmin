@@ -19,7 +19,7 @@ use App\Models\ScheduleSession;
 Route::post('/register', [UserAuthController::class, 'register']);
 Route::post('/login', [UserAuthController::class, 'login'])->name('login');
 
-Route::get('/room',[RoomController::class,'index']);
+
 
 /*///////////////////////////////////////////
 *
@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::get('student-groups', [StudentsGroupController::class, 'index']);
 
     Route::get('/session',[ScheduleSessionController::class,'index']);
+    Route::get('/room',[RoomController::class,'index']);
 });
 
 
