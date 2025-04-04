@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Web\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\StudentGroup;
-
+use Illuminate\Validation\Rule;
 
 class StudentsGroupController extends Controller
 {
@@ -67,9 +67,9 @@ class StudentsGroupController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required|string|unique:students_groups,name'],
-            'generation_year' => 'required|integer',
-            'department' => 'required|string',
+            'name' => ['required', 'string', 'unique:students_groups,name'],
+            'generation_year' => ['required', 'integer'],
+            'department' => ['required', 'string'],
         ]);
 
         StudentGroup::create($data);
@@ -103,9 +103,9 @@ class StudentsGroupController extends Controller
         $student_group = StudentGroup::findOrFail($id);
 
         $data = $request->validate([
-            'name' => 'required|string|unique:students_groups,name,' . $id,
-            'generation_year' => 'required|integer',
-            'department' => 'required|string',
+            'name' => ['required', 'string', Rule::unique('students_groups', 'name')->ignore($id)],
+            'generation_year' => ['required','integer'],
+            'department' => ['required','string'],
         ]);
 
         $student_group->update($data);
