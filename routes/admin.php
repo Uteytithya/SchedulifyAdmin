@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Auth\UserController;
 use App\Http\Controllers\Web\Auth\RoomController;
 use App\Http\Controllers\Web\Auth\StudentsGroupController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,7 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('rooms_edit'); // Show edit form
     Route::put('/rooms/{room}', [RoomController::class, 'update'])->name('rooms_update'); // Update room
     Route::delete('/rooms/{room}', [RoomController::class, 'destroy'])->name('rooms_destroy'); // Delete room
+    Route::get('/rooms/search', [RoomController::class, 'search'])->name('rooms_search');
 //    working the student group
     Route::get('/student-groups', [StudentsGroupController::class, 'index'])->name('student-groups_index');
     Route::get('/student-groups/create', [StudentsGroupController::class, 'create'])->name('student-groups_create');
@@ -55,5 +57,11 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get('timetable/edit/{timetable}', [TimetableController::class, 'edit'])->name('timetable_edit');
     Route::put('timetable/edit/{timetable}', [TimetableController::class, 'update'])->name('timetable_edit_post');
     Route::delete('timetable/edit/{timetable}', [TimetableController::class, 'destroy'])->name('timetable_delete_post');
-    
+
+    Route::get("user", [UserController::class, 'index'])->name('users.index');
+    Route::get("user/create", [UserController::class, 'create'])->name('users.create');
+    Route::post("user/create", [UserController::class, 'store'])->name('users.store');
+    Route::get("user/edit/{user}", [UserController::class, 'edit'])->name('users.edit');
+    Route::put("user/edit/{user}", [UserController::class, 'update'])->name('users.update');
+    Route::delete("user/edit/{user}", [UserController::class, 'destroy'])->name('users.delete');
 });

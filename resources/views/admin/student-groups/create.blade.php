@@ -4,7 +4,7 @@
     <div class="container mx-auto px-4 py-6">
         <h1 class="text-2xl font-bold mb-4">Create New Group</h1>
 
-        <form action="{{ route('admin.student-groups.store') }}" method="POST">
+        <form action="{{ route('admin.student-groups_store') }}" method="POST">
             @csrf
             <div class="mb-4">
                 <label class="block text-gray-700">Group Name</label>

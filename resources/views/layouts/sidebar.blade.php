@@ -10,28 +10,28 @@
 
    <ul class="space-y-5 font-medium p-2">
       <li>
-         <a href="/" class="{{ request()->is('/') ? $activeStyle : '' }} {{$style}}">
+         <a href="/admin/auth/dashboard" class="{{ request()->is('admin/auth/dashboard*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-house"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
         </a>
       </li>
 
       <li>
-         <a href="{{route('admin.course')}}" class="{{ request()->is('admin/*') ? $activeStyle : '' }} {{$style}}">
+         <a href="{{route('admin.course')}}" class="{{ request()->is('admin/auth/course*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-book-open-reader"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Courses</span>
          </a>
       </li>
 
       <li>
-        <a href="/classes" class="{{ request()->is('classes') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route("admin.rooms_index")}}" class="{{ request()->is('admin/auth/rooms*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-inbox"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Classes</span>
          </a>
       </li>
 
       <li>
-        <a href="/timetables" class="{{ request()->is('timetables') ? $activeStyle : '' }} {{$style}}">
+        <a href="/timetables" class="{{ request()->is('timetables*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-calendar"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Timetables</span>
          </a>
@@ -39,7 +39,7 @@
 
 
       <li>
-        <a href="/requests" class="{{ request()->is('requests') ? $activeStyle : '' }} {{$style}}">
+        <a href="/requests" class="{{ request()->is('requests*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-comment-dots"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Requests</span>
          </a>
@@ -48,7 +48,7 @@
 
 
       <li>
-        <a href="/users" class="{{ request()->is('users') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route("admin.users.index")}}" class="{{ request()->is('admin/auth/user*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-user"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
          </a>
@@ -56,17 +56,9 @@
 
 
       <li>
-        <a href="/groups" class="{{ request()->is('groups') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route('admin.student-groups_index')}}" class="{{ request()->is('admin/auth/student-groups*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-users"></i>
             <span class="flex-1 ms-2 whitespace-nowrap">Groups</span>
-         </a>
-      </li>
-
-
-      <li>
-        <a href="/settings" class="{{ request()->is('settings') ? $activeStyle : '' }} {{$style}}">
-            <i class="fa-solid fa-gear"></i>
-            <span class="flex-1 ms-2 whitespace-nowrap">Settings</span>
          </a>
       </li>
    </ul>

@@ -11,10 +11,29 @@ class RoomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-//        $rooms = Room::all(); // Fetch all rooms from the database
-        $rooms = Room::paginate(2);
+        $query = Room::query();
+
+        if ($request->has('query')) {
+            $query->where('name', 'like', '%' . $request->query . '%');
+        }
+
+        if ($request->has('sort')) {
+            $query->orderBy($request->sort, 'asc');
+        } else {
+            $query->orderBy('name', 'asc');
+        }
+
+        $rooms = $query->paginate(2);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'table' => view('admin.rooms.partials.table', compact('rooms'))->render(),
+                'pagination' => $rooms->links()->render(),
+            ]);
+        }
+
         return view('admin.rooms.index', compact('rooms'));
     }
 
@@ -40,7 +59,7 @@ class RoomController extends Controller
 
         Room::create($incomingFields);
 
-        return redirect()->route('admin.rooms.index')->with('success', 'Room created successfully!');
+        return redirect()->route('admin.rooms_index')->with('success', 'Room created successfully!');
     }
 
     /**
@@ -60,15 +79,15 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'floor' => 'required|integer',
-            'capacity' => 'required|integer',
-            'is_active' => 'required|boolean',
+            'name' => ['required', Rule::unique('rooms', 'name')],
+            'floor' => ['required'],
+            'capacity' => ['required', 'integer'],
+            'is_active' => ['required', 'boolean']
         ]);
 
         $room->update($request->all());
 
-        return redirect()->route('admin.rooms.index')->with('success', 'Room updated successfully!');
+        return redirect()->route('admin.rooms_index')->with('success', 'Room updated successfully!');
     }
 
     /**
@@ -77,7 +96,30 @@ class RoomController extends Controller
     public function destroy(Room $room)
     {
         $room->delete();
+        return redirect()->route('admin.rooms_index')->with('success', 'Room deleted successfully!');
+    }
+    public function search(Request $request)
+    {
+        $query = Room::query();
 
-        return redirect()->route('admin.rooms.index')->with('success', 'Room deleted successfully!');
+        // Search by name
+        if ($request->has('query') && !empty($request->query('query'))) {
+            $query->where('name', 'like', '%' . $request->query('query') . '%');
+        }
+
+        // Sorting
+        if ($request->has('sort') && in_array($request->sort, ['name', 'floor', 'capacity'])) {
+            $query->orderBy($request->sort, 'asc');
+        } else {
+            $query->orderBy('name', 'asc'); // Default sorting
+        }
+
+        // Paginate results
+        $rooms = $query->paginate(2);
+
+        return response()->json([
+            'table' => view('admin.rooms.partials.table', compact('rooms'))->render(),
+            'pagination' => $rooms->links()->render(),
+        ]);
     }
 }

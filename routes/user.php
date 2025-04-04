@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Auth\ScheduleSessionController;
+use App\Http\Controllers\Api\v1\Auth\SessionController;
+use App\Http\Controllers\Api\v1\Auth\SessionRequestController;
+use App\Http\Controllers\Api\v1\Auth\StudentsGroupController;
 use App\Http\Controllers\Api\v1\Auth\TimetableController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\Auth\UserAuthController;
-
+use App\Models\ScheduleSession;
 
 /*///////////////////////////////////////////
 *
@@ -29,6 +33,12 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
 
     Route::get('/timetable', [TimetableController::class, 'index']);
     Route::get('/timetable/{id}', [TimetableController::class, 'show']);
+
+    Route::post('request', [SessionRequestController::class, 'store']);
+
+    Route::get('student-groups', [StudentsGroupController::class, 'index']);
+
+    Route::get('/session',[ScheduleSessionController::class,'index']);
 });
 
 

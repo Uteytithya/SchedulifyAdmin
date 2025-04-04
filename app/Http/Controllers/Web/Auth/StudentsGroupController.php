@@ -49,10 +49,8 @@ class StudentsGroupController extends Controller
         } else {
             $query->orderBy('created_at', 'desc'); // Default sorting
         }
-
         $groups = $query->paginate(5); // Pagination
-
-        return view('admin.student-groups.index', compact('groups'));
+        return view(('admin.student-groups.index'), compact('groups'));
     }
 
     /**
@@ -69,14 +67,14 @@ class StudentsGroupController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:student_groups,name',
+            'name' => ['required|string|unique:students_groups,name'],
             'generation_year' => 'required|integer',
             'department' => 'required|string',
         ]);
 
         StudentGroup::create($data);
 
-        return redirect()->route('admin.student-groups.index')->with('success', 'Group Created!');
+        return redirect()->route('admin.student-groups_index')->with('success', 'Group Created!');
     }
 
 
@@ -105,14 +103,14 @@ class StudentsGroupController extends Controller
         $student_group = StudentGroup::findOrFail($id);
 
         $data = $request->validate([
-            'name' => 'required|string|unique:student_groups,name,' . $id,
+            'name' => 'required|string|unique:students_groups,name,' . $id,
             'generation_year' => 'required|integer',
             'department' => 'required|string',
         ]);
 
         $student_group->update($data);
 
-        return redirect()->route('admin.student-groups.index')->with('success', 'Group Updated Successfully!');
+        return redirect()->route('admin.student-groups_index')->with('success', 'Group Updated Successfully!');
     }
 
 
@@ -124,7 +122,7 @@ class StudentsGroupController extends Controller
         $student_group = StudentGroup::findOrFail($id);
         $student_group->delete();
 
-        return redirect()->route('admin.student-groups.index')->with('success', 'Group Deleted Successfully!');
+        return redirect()->route('admin.student-groups_index')->with('success', 'Group Deleted Successfully!');
     }
 
 }

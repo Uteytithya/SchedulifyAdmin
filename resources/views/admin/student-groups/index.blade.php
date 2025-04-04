@@ -1,86 +1,114 @@
 @extends('layouts.layout')
 
 @section('content')
-    <div class="container mx-auto px-4 py-6">
-        <h1 class="text-2xl font-bold mb-4">Groups</h1>
 
-        <!-- Search & Filter -->
+    @if(session('success'))
+        <x-toast :message="session('success')" :type="'success'" />
+    @endif
+
+    <div class="container mx-auto px-4 py-6 max-w-7xl mt-20">
+        <!-- Breadcrumb -->
+        <span class="text-md text-gray-500 flex gap-1">
+            <p class="font-bold">Student Groups ></p>
+            <p>List</p>
+        </span>
+
+        <!-- Page Title & Create Button -->
+        <div class="flex justify-between items-center mb-6 mt-2">
+            <h1 class="text-3xl font-semibold">Student Group List</h1>
+            <a href="{{ route('admin.student-groups_create') }}" class="inline-block bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition-colors">
+                Create Group
+            </a>
+        </div>
+
+        <!-- Search & Sorting -->
         <div class="flex items-center space-x-4 mb-4">
             <input type="text" id="search" placeholder="Search Groups..." class="pl-10 p-2 rounded-lg border w-64 bg-gray-100">
-
-            <!-- Sorting -->
             <select id="sort" class="p-2 border rounded">
                 <option value="name">Sort by Name</option>
                 <option value="generation_year">Sort by Generation</option>
                 <option value="department">Sort by Department</option>
             </select>
-
-            <!-- Create New Button -->
-            <a href="{{ route('admin.student-groups.create') }}" class="bg-blue-500 text-white p-2 rounded-lg">
-                Create New
-            </a>
         </div>
 
         <!-- Table -->
-        <div id="table-container">
-            @include('admin.student-groups.partials.table', ['groups' => $groups])
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full table-auto">
+                <thead class="bg-gray-200">
+                <tr class="border-b border-gray-300">
+{{--                    <th class="px-4 py-3 text-left">--}}
+{{--                        <input type="checkbox">--}}
+{{--                    </th>--}}
+                    <th class="px-4 py-3 text-left">Name</th>
+                    <th class="px-4 py-3 text-left">Generation</th>
+                    <th class="px-4 py-3 text-left">Department</th>
+                    <th class="px-4 py-3 text-center">Edit</th>
+                    <th class="px-4 py-3 text-center">Delete</th>
+                </tr>
+                </thead>
+                <tbody id="group-results">
+                @include('admin.student-groups.partials.table', ['groups' => $groups])
+                </tbody>
+            </table>
         </div>
+
         <!-- Pagination -->
         <div class="mt-4" id="pagination">
             {{ $groups->links() }}
         </div>
     </div>
+@endsection
 
-    <!-- jQuery & AJAX Script -->
+@section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
             let timer;
-            // AJAX Search
-            $(document).on("keyup", "#search", function () {
-                let query = $(this).val();
+
+            // AJAX Search & Sort
+            function fetchGroups() {
+                let query = $('#search').val();
+                let sort = $('#sort').val();
 
                 $.ajax({
-                    url: "{{ route('admin.student-groups.search') }}", // ✅ Correct route
+                    url: "{{ route('admin.student-groups_search') }}",
                     type: "GET",
-                    data: { query: query },
+                    data: { query: query, sort: sort },
                     success: function (response) {
-                        $("#table-container").html(response.table); // ✅ Update table
-                        $("#pagination").html(response.pagination); // ✅ Update pagination
+                        $("#group-results").html(response.table);
+                        $("#pagination").html(response.pagination);
                     },
                     error: function(xhr) {
                         console.log("Error:", xhr);
                     }
                 });
-            });
-            // AJAX Sorting
-            $('#sort').on('change', function () {
-                let query = $('#search').val();
-                let sort = $(this).val();
-                fetchGroups(query, sort);
+            }
+
+            // Search Event
+            $('#search').on("keyup", function () {
+                clearTimeout(timer);
+                timer = setTimeout(fetchGroups, 300);
             });
 
-            // Function to Fetch Data via AJAX
-            function fetchGroups(query, sort) {
-                $.ajax({
-                    url: "{{ route('admin.student-groups.search') }}",
-                    type: "GET",
-                    data: { query: query, sort: sort },
-                    success: function (data) {
-                        $('#group-results').html(data.table);
-                        $('#pagination').html(data.pagination);
-                    }
-                });
-            }
+            // Sorting Event
+            $('#sort').on('change', fetchGroups);
 
             // Delete Confirmation
             $(document).on('click', '.delete-btn', function (e) {
                 e.preventDefault();
                 let form = $(this).closest("form");
 
-                if (confirm("Are you sure you want to delete this group?")) {
-                    form.submit();
-                }
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

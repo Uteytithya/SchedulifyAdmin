@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Web\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Room;
+use App\Models\SessionRequest;
 
 class AdminAuthController extends Controller
 {
@@ -33,7 +36,14 @@ class AdminAuthController extends Controller
 
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $userCount = User::count();
+        $roomCount = Room::count();
+        $requestCount = SessionRequest::count();
+        return view('admin.dashboard', [
+            'userCount' => $userCount,
+            'roomCount' => $roomCount,
+            'requestCount' => $requestCount
+        ]);
     }
 }
 
