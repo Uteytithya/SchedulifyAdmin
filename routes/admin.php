@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Auth\TimetableController;
 use App\Http\Controllers\Web\Auth\UserController;
 use App\Http\Controllers\Web\Auth\RoomController;
 use App\Http\Controllers\Web\Auth\StudentsGroupController;
@@ -14,7 +15,6 @@ use App\Http\Controllers\Web\Auth\AdminAuthController;
 
 Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AdminAuthController::class, 'login'])->name('login_post');
-Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 
 /*///////////////////////////////////////////
@@ -25,6 +25,7 @@ Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($router) {
     Route::get('dashboard', [AdminAuthController::class, 'dashboard'])->name('dashboard');
+    Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     // Room Management Routes
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms_index'); // List rooms
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms_create'); // Show create form
@@ -55,4 +56,13 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get("user/edit/{user}", [UserController::class, 'edit'])->name('users.edit');
     Route::put("user/edit/{user}", [UserController::class, 'update'])->name('users.update');
     Route::delete("user/edit/{user}", [UserController::class, 'destroy'])->name('users.delete');
+
+    // Timetable Management Routes
+    Route::get('/timetables', [TimetableController::class, 'index'])->name('timetables_index');
+    Route::get('/timetables/create', [TimetableController::class, 'create'])->name('timetables_create');
+    Route::post('/timetables', [TimetableController::class, 'store'])->name('timetables_store');
+    Route::get('/timetables/{timetable}/edit', [TimetableController::class, 'edit'])->name('timetables_edit');
+    Route::put('/timetables/{timetable}', [TimetableController::class, 'update'])->name('timetables_update');
+    Route::delete('/timetables/{timetable}', [TimetableController::class, 'destroy'])->name('timetables_destroy');
+    Route::get('/timetables/search', [TimetableController::class, 'search'])->name('timetables_search');
 });
