@@ -46,7 +46,21 @@
                         <span class="text-red-500">{{ $message }}</span>
                     @enderror
                 </div>
-             </div>
+                <div class="mb-5 col-span-2">
+                    <label for="courses" class="block mb-2 text-md font-medium text-gray-900">Courses :</label>
+                    <select name="courses[]" id="courses" multiple
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->id }}"
+                                {{ (collect(old('courses'))->contains($course->id) || (isset($user) && $user->courses->contains($course->id))) ? 'selected' : '' }}>
+                                {{ $course->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <p class="text-gray-500 text-sm mt-1">Hold Ctrl (or Cmd on Mac) to select multiple courses.</p>
+                </div>
+
+
             </div>
                 <button type="submit" class="focus:outline-none text-white bg-green-600 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 mt-5 ">Create</button>
         </form>
