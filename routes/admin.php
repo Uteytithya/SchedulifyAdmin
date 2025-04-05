@@ -14,7 +14,6 @@ use App\Http\Controllers\Web\Auth\AdminAuthController;
 
 Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AdminAuthController::class, 'login'])->name('login_post');
-Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 
 /*///////////////////////////////////////////
@@ -25,6 +24,7 @@ Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($router) {
     Route::get('dashboard', [AdminAuthController::class, 'dashboard'])->name('dashboard');
+    Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     // Room Management Routes
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms_index'); // List rooms
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms_create'); // Show create form
