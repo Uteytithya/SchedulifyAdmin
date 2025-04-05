@@ -84,14 +84,30 @@ class TimetableController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'group_id' => 'required',
-            'year' => ['required', 'integer'],
-            'start_date' => ['required', 'date'],
+            'generation' => 'required|integer',
+            'term' => 'required|in:1,2,3',
+            'course_ids' => 'required|array|max:6',
+            'course_ids.*' => 'exists:courses,id',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        Timetables::create($data);
+        // Get all student groups from the selected generation
+        $groups = StudentGroup::where('generation_year', $data['generation'])->get();
 
-        return redirect()->route('admin.timetables_index')->with('success', 'Timetable Created!');
+        foreach ($groups as $group) {
+            $timetable = Timetables::create([
+                'student_group_id' => $group->id,
+                'year' => $data['generation'],
+                'term' => $data['term'],
+                'start_date' => $data['start_date'],
+            ]);
+
+        }
+
+        return redirect()->route('admin.timetables_index')->with('success', 'Timetable generated for all groups.');
     }
 
     /**
