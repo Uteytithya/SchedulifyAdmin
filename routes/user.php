@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Auth\CourseController;
+use App\Http\Controllers\Api\v1\Auth\RoomController;
 use App\Http\Controllers\Api\v1\Auth\ScheduleSessionController;
 use App\Http\Controllers\Api\v1\Auth\SessionController;
 use App\Http\Controllers\Api\v1\Auth\SessionRequestController;
@@ -17,6 +19,8 @@ use App\Models\ScheduleSession;
 *///////////////////////////////////////////
 Route::post('/register', [UserAuthController::class, 'register']);
 Route::post('/login', [UserAuthController::class, 'login'])->name('login');
+
+
 
 /*///////////////////////////////////////////
 *
@@ -39,6 +43,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::get('student-groups', [StudentsGroupController::class, 'index']);
 
     Route::get('/session',[ScheduleSessionController::class,'index']);
+    Route::get('/room',[RoomController::class,'index']);
+    Route::get('/course',[CourseController::class,'index']);
 });
 
 

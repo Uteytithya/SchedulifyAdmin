@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\Web\Auth\SessionRequestController;
+use App\Http\Controllers\Web\Auth\TimetableController;
 use App\Http\Controllers\Web\Auth\UserController;
 use App\Http\Controllers\Web\Auth\RoomController;
 use App\Http\Controllers\Web\Auth\StudentsGroupController;
@@ -18,7 +19,6 @@ use App\Models\SessionRequest;
 
 Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AdminAuthController::class, 'login'])->name('login_post');
-Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 
 /*///////////////////////////////////////////
@@ -29,6 +29,7 @@ Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($router) {
     Route::get('dashboard', [AdminAuthController::class, 'dashboard'])->name('dashboard');
+    Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     // Room Management Routes
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms_index'); // List rooms
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms_create'); // Show create form
@@ -46,9 +47,9 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::delete('/student-groups/{group}', [StudentsGroupController::class, 'destroy'])->name('student-groups_destroy');
     Route::get('/search-groups', [StudentsGroupController::class, 'search'])->name('student-groups_search');
 
-    Route::get('course', [CourseController::class, 'show'])->name('course');
-    Route::get('course/create', [CourseController::class, 'showCreate'])->name('course_create');
-    Route::post('course/create', [CourseController::class, 'create'])->name('course_create_post');
+    Route::get('course', [CourseController::class, 'index'])->name('course');
+    Route::get('course/create', [CourseController::class, 'create'])->name('course_create');
+    Route::post('course/create', [CourseController::class, 'store'])->name('course_create_post');
     Route::get('course/edit/{course}', [CourseController::class, 'edit'])->name('course_edit');
     Route::put('course/edit/{course}', [CourseController::class, 'update'])->name('course_edit_post');
     Route::delete('course/edit/{course}', [CourseController::class, 'destroy'])->name('course_delete_post');
@@ -61,4 +62,13 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get("user/edit/{user}", [UserController::class, 'edit'])->name('users.edit');
     Route::put("user/edit/{user}", [UserController::class, 'update'])->name('users.update');
     Route::delete("user/edit/{user}", [UserController::class, 'destroy'])->name('users.delete');
+
+    // Timetable Management Routes
+    Route::get('/timetables', [TimetableController::class, 'index'])->name('timetables_index');
+    Route::get('/timetables/create', [TimetableController::class, 'create'])->name('timetables_create');
+    Route::post('/timetables', [TimetableController::class, 'store'])->name('timetables_store');
+    Route::get('/timetables/{timetable}/edit', [TimetableController::class, 'edit'])->name('timetables_edit');
+    Route::put('/timetables/{timetable}', [TimetableController::class, 'update'])->name('timetables_update');
+    Route::delete('/timetables/{timetable}', [TimetableController::class, 'destroy'])->name('timetables_destroy');
+    Route::get('/timetables/search', [TimetableController::class, 'search'])->name('timetables_search');
 });

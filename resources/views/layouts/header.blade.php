@@ -7,8 +7,11 @@
             <i class="fa-solid fa-envelope"></i>
         </a>
         <img src="{{ asset('Sad.jpg') }}" width="40" height="40" alt="Profile" class="profile-image rounded-full" />
-        <a href="{{route("admin.logout")}}" class="text-gray-800 hover:text-gray-800 text-2xl">
-            <i class="fa-solid fa-sign-out-alt"></i>
-        </a>
+        <form action="{{ route("admin.logout") }}" method="POST" style="display: inline;">
+            @csrf
+            <button type="submit" class="text-gray-800 hover:text-gray-800 text-2xl">
+                <i class="fa-solid fa-sign-out-alt"></i>
+            </button>
+        </form>
     </div>
 </div>

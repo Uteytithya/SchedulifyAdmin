@@ -23,14 +23,10 @@ class ScheduleSessionController extends BaseAPI
     {
         try {
             $params = [];
-            $params['timetable_id'] = $request->timetable_id;
-            $params['course_user_id'] = $request->course_user_id;
-            $params['room_id'] = $request->room_id;
-            $params['day'] = $request->day;
-            $params['start_time'] = $request->start_time;
-            $params['end_time'] = $request->end_time;
-            $params['status'] = $request->status;
-            $params['session_type_id'] = $request->session_type_id;
+            $params['order_by'] = $request->order_by;
+            $params['filter_by'] = $request->filter_by;
+            $params['search'] = $request->search;
+            $params['columns'] = $request->columns;
             $data = $this->ScheduleSession->getAllScheduleSessions($params);
             return $this->successResponse($data, 'Get all Schedule successfully');
         } catch (\Exception $e) {

@@ -13,7 +13,7 @@
          <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    
+
     <body class="bg-gray-100 font-sans antialiased">
         <!-- Header Section -->
 
@@ -31,19 +31,19 @@
 
 <body class="bg-gray-100 font-sans antialiased">
     <!-- Header Section -->
-    <header class="bg-white shadow-md">
+    <header class="bg-white shadow-md sticky z-[50] top-0">
         @include('layouts.header')
     </header>
 
     <!-- Main Layout Section -->
     <div class="flex h-screen">
         <!-- Sidebar Section -->
-        <aside class="w-64  text-white space-y-4">
+        <aside class="w-64 text-white space-y-4">
             @include('layouts.sidebar')
         </aside>
 
         <!-- Main Content Section -->
-        <main class="flex-1 ">
+        <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
             @yield('content')
         </main>
     </div>
