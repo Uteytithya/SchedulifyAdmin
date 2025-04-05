@@ -39,33 +39,24 @@
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-100 border-b">
-                    <th class="p-3"><input type="checkbox"></th>
+                    <!-- <th class="p-3"><input type="checkbox"></th> -->
                     <th class="p-3 border-r">Room</th>
-                    <th class="p-3 border-r">Generation</th>
-                    <th class="p-3 border-r">Group</th>
-                    <th class="p-3 border-r">Lecturer</th>
+                    <th class="p-3 border-r">Floor</th>
+                    <th class="p-3 border-r">Capacity</th>
                     <th class="p-3">Status</th>
                 </tr>
             </thead>
             <tbody>
+            @foreach ($rooms->sortBy('name') as $room) 
                 <tr class="border-b">
-                    <td class="p-3"><input type="checkbox"></td>
-                    <td class="p-3 border-r">A204</td>
-                    <td class="p-3 border-r">11</td>
-                    <td class="p-3 border-r">G10</td>
-                    <td class="p-3 border-r">Jo Jo Ba</td>
-                    <td class="p-3 text-green-500">Available</td>
+                    <!-- <td class="p-3"><input type="checkbox"></td> -->
+                    <td class="p-3 border-r">{{$room->name}}</td>
+                    <td class="p-3 border-r">{{$room->floor}}</td>
+                    <td class="p-3 border-r">{{$room->capacity}}</td>
+                    <td class="p-3 text-green-500 font-semibold {{ $room->is_active ? 'text-green-500' : 'text-red-500' }}">
+                    {{ $room->is_active ? 'Active' : 'Inactive' }}</td>
                 </tr>
-                @for ($i = 0; $i < 9; $i++)
-                <tr class="border-b">
-                    <td class="p-3"><input type="checkbox"></td>
-                    <td class="p-3 border-r">A008</td>
-                    <td class="p-3 border-r">10</td>
-                    <td class="p-3 border-r">G09</td>
-                    <td class="p-3 border-r">Sengly</td>
-                    <td class="p-3 text-red-500">Not Available</td>
-                </tr>
-                @endfor
+                @endforeach
             </tbody>
         </table>
     </div>
