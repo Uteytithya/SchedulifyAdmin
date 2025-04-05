@@ -12,7 +12,7 @@ class CourseSV extends BaseService
         return Course::query();
     }
 
-    public function getAllRooms($params)
+    public function getAllCourses($params)
     {
         try {
             $rooms = $this->getAll($params);

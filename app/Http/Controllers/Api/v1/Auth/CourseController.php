@@ -4,12 +4,18 @@ namespace App\Http\Controllers\Api\v1\Auth;
 
 use App\Http\Controllers\Api\v1\BaseAPI;
 use App\Models\Course;
+use App\Services\CourseSV;
 use Illuminate\Http\Request;
 
 class CourseController extends BaseAPI
 {
 
     protected $Course; // Service instance
+
+    public function __construct(CourseSV $courseSV)
+    {
+        $this->Course= $courseSV;
+    }
     /**
      * Display a listing of the resource.
      */
