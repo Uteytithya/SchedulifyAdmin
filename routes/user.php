@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Auth\CourseController;
 use App\Http\Controllers\Api\v1\Auth\RoomController;
 use App\Http\Controllers\Api\v1\Auth\ScheduleSessionController;
 use App\Http\Controllers\Api\v1\Auth\SessionController;
@@ -43,6 +44,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
 
     Route::get('/session',[ScheduleSessionController::class,'index']);
     Route::get('/room',[RoomController::class,'index']);
+    Route::get('/course',[CourseController::class,'index']);
 });
 
 

@@ -8,12 +8,24 @@ use Illuminate\Http\Request;
 
 class CourseController extends BaseAPI
 {
+
+    protected $Course; // Service instance
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        try {
+            $params = [];
+            $params['order_by'] = request()->get('order_by');
+            $params['filter_by'] = request()->get('filter_by');
+            $params['search'] = request()->get('search');
+            $params['columns'] = request()->get('columns');
+            $data = $this->Course->getAllCourses($params);
+            return $this->successResponse($data, 'Get all courses successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
     }
 
     /**
