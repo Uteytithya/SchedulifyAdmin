@@ -31,7 +31,7 @@
       </li>
 
       <li>
-        <a href="/timetables" class="{{ request()->is('timetables*') ? $activeStyle : '' }} {{$style}}">
+        <a href="{{route("admin.timetables_index")}}" class="{{ request()->is('admin/auth/timetables*') ? $activeStyle : '' }} {{$style}}">
             <i class="fa-solid fa-calendar"></i>
             <span class="flex-1 ms-3 whitespace-nowrap">Timetables</span>
          </a>
