@@ -15,9 +15,9 @@ class Room extends Model
     protected $fillable = ['name', 'floor', 'capacity', 'is_active'];
 
 
-    public function sessions()
+    public function scheduleSessions()
     {
         return $this->hasMany(ScheduleSession::class, 'room_id');
-        
+
     }
 }

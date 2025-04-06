@@ -18,37 +18,37 @@ class GroupSeeder extends Seeder
             [
                 'id' => Str::uuid(),
                 'name' => 'CS-GEN-11-G1',
-                'generation_year' => 3,
+                'generation_year' => 2,
                 'department' => 'CS',
             ],
             [
                 'id' => Str::uuid(),
                 'name' => 'CS-GEN-11-G2',
-                'generation_year' => 3,
+                'generation_year' => 2,
                 'department' => 'CS',
             ],
             [
                 'id' => Str::uuid(),
                 'name' => 'CS-GEN-11-G3',
-                'generation_year' => 3,
+                'generation_year' => 2,
                 'department' => 'CS',
             ],
             [
                 'id' => Str::uuid(),
                 'name' => 'CS-GEN-11-G4',
-                'generation_year' => 3,
+                'generation_year' => 2,
                 'department' => 'CS',
             ],
             [
                 'id' => Str::uuid(),
                 'name' => 'CS-GEN-11-G5',
-                'generation_year' => 3,
+                'generation_year' => 2,
                 'department' => 'CS',
             ],
             [
                 'id' => Str::uuid(),
                 'name' => 'CS-GEN-11-G6',
-                'generation_year' => 3,
+                'generation_year' => 2,
                 'department' => 'CS',
             ],
             [

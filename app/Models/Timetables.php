@@ -13,14 +13,20 @@ class Timetables extends Model
 
     protected $keyType = 'string';
     protected $primaryKey = 'id';
-    protected $fillable = ['group_id', 'year', 'start_date', 'created_at'];
+    protected $fillable = [
+        'id',
+        'student_group_id',
+        'year',
+        'term',
+        'start_date',
+    ];
 
     public function studentGroup()
     {
-        return $this->belongsTo(StudentGroup::class, 'group_id');
+        return $this->belongsTo(StudentGroup::class, 'student_group_id');
     }
 
-    public function sessions()
+    public function scheduleSessions()
     {
         return $this->hasMany(ScheduleSession::class, 'timetable_id');
     }

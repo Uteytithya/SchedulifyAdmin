@@ -3,14 +3,13 @@
 use App\Http\Controllers\Api\v1\Auth\CourseController;
 use App\Http\Controllers\Api\v1\Auth\RoomController;
 use App\Http\Controllers\Api\v1\Auth\ScheduleSessionController;
-use App\Http\Controllers\Api\v1\Auth\SessionController;
 use App\Http\Controllers\Api\v1\Auth\SessionRequestController;
 use App\Http\Controllers\Api\v1\Auth\StudentsGroupController;
 use App\Http\Controllers\Api\v1\Auth\TimetableController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\Auth\UserAuthController;
-use App\Models\ScheduleSession;
+use App\Http\Controllers\Api\v1\Auth\LecturerAvailabilityController;
 
 /*///////////////////////////////////////////
 *
@@ -45,6 +44,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::get('/session',[ScheduleSessionController::class,'index']);
     Route::get('/room',[RoomController::class,'index']);
     Route::get('/course',[CourseController::class,'index']);
+
+    Route::apiResource('lecturer', LecturerAvailabilityController::class);
 });
 
 

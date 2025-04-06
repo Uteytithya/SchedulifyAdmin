@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\CourseUser;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -49,9 +51,12 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
             'role' => $request->role,
         ]);
-
-        if ($request->has('courses')) {
-            $user->courses()->sync($request->courses);
+        foreach ($request->courses as $courseId) {
+            CourseUser::create([
+                'id' => Str::uuid(),
+                'user_id' => $user->id,
+                'course_id' => $courseId,
+            ]);
         }
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully');
@@ -101,9 +106,12 @@ class UserController extends Controller
         $user->email = $validated['email'];
         $user->role = $validated['role'];
 
-        // Check if a new password is provided
-        if (!empty($validated['password'])) {
-            $user->password = bcrypt($validated['password']);
+        foreach ($request->courses as $courseId) {
+            CourseUser::create([
+                'id' => Str::uuid(),
+                'user_id' => $user->id,
+                'course_id' => $courseId,
+            ]);
         }
 
         // Save user and sync courses

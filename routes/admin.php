@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Web\Auth\SessionRequestController;
 use App\Http\Controllers\Web\Auth\TimetableController;
 use App\Http\Controllers\Web\Auth\UserController;
@@ -9,7 +8,9 @@ use App\Http\Controllers\Web\Auth\StudentsGroupController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\Auth\CourseController;
 use App\Http\Controllers\Web\Auth\AdminAuthController;
+
 use App\Models\SessionRequest;
+
 
 /*///////////////////////////////////////////
 *
@@ -71,4 +72,5 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::put('/timetables/{timetable}', [TimetableController::class, 'update'])->name('timetables_update');
     Route::delete('/timetables/{timetable}', [TimetableController::class, 'destroy'])->name('timetables_destroy');
     Route::get('/timetables/search', [TimetableController::class, 'search'])->name('timetables_search');
+    Route::get('/timetables/{timetable}/show', [TimetableController::class, 'show'])->name('timetables_show');
 });
