@@ -1,15 +1,15 @@
 @extends('layouts.layout')
 
 @section('content')
+    @if(session('success'))
+        <x-toast :message="session('success')" :type="'success'" />
+    @endif
 
-        @if(session('success'))
-            <x-toast :message="session('success')" :type="'success'" />
-        @endif
-
-    <div class="container mx-auto px-4 py-6 max-w-7xl mt-20">
-        <span class="text-md text-gray-500 flex gap-1 ">
-            <p class="font-bold">User ></p>
-            <p>List </p>
+    <div class="container mx-auto p-6 mt-5">
+        <!-- Breadcrumb -->
+        <span class="text-md text-gray-500 flex gap-1">
+            <p class="font-bold">Rooms ></p>
+            <p>List</p>
         </span>
 
         <div class="flex justify-between items-center mb-6 mt-2">
@@ -54,6 +54,10 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <!-- Pagination -->
+        <div class="mt-4" id="pagination">
+            {{ $users->links() }}
         </div>
     </div>
 @endsection

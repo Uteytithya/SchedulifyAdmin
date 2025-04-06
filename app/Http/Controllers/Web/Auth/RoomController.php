@@ -22,10 +22,10 @@ class RoomController extends Controller
         if ($request->has('sort')) {
             $query->orderBy($request->sort, 'asc');
         } else {
-            $query->orderBy('name', 'asc');
+            $query->orderBy('name', 'desc'); 
         }
 
-        $rooms = $query->paginate(2);
+        $rooms = $query->paginate(10);
 
         if ($request->ajax()) {
             return response()->json([
@@ -79,7 +79,7 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
 
         $request->validate([
-            'name' => ['required', Rule::unique('rooms', 'name')],
+            'name' => ['required'],
             'floor' => ['required'],
             'capacity' => ['required', 'integer'],
             'is_active' => ['required', 'boolean']

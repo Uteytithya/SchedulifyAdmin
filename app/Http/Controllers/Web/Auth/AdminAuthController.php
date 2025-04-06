@@ -39,11 +39,18 @@ class AdminAuthController extends Controller
         $userCount = User::count();
         $roomCount = Room::count();
         $requestCount = SessionRequest::count();
+        $users = User::all();
+        $rooms = Room::all();
+        $requests = SessionRequest::all();
         return view('admin.dashboard', [
             'userCount' => $userCount,
             'roomCount' => $roomCount,
-            'requestCount' => $requestCount
+            'requestCount' => $requestCount,
+            'users' => $users,
+            'rooms' => $rooms,
+            'requests' => $requests
         ]);
     }
+    
 }
 
