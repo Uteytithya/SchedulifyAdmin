@@ -8,7 +8,7 @@
     <div class="container mx-auto p-6 mt-5">
         <!-- Breadcrumb -->
         <span class="text-md text-gray-500 flex gap-1">
-            <p class="font-bold">Rooms ></p>
+            <p class="font-bold">Users ></p>
             <p>List</p>
         </span>
 
@@ -19,8 +19,18 @@
             </a>
         </div>
 
-        <div class="bg-white shadow-md rounded-lg overflow-hidden ">
-            <table class="min-w-full table-auto">
+        <!-- Search -->
+        <div class="flex items-center space-x-4 mb-4">
+            <input
+                type="text"
+                id="search"
+                placeholder="Search Users..."
+                class="pl-10 p-2 rounded-lg border w-64 bg-gray-100"
+            >
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full table-auto" id="user-table">
                 <thead class="bg-gray-200">
                     <tr class="border-b border-gray-300">
                         <th class="px-4 py-3 text-left">Name</th>
@@ -30,18 +40,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($users->isEmpty())
-                        <tr class="h-48">
-                            <td class="px-4 py-4 text-center" colspan="4">No users found</td>
-                        </tr>
-                    @endif
                     @foreach ($users as $user)
                         <tr class="border-b border-gray-300">
                             <td class="px-4 py-4">{{ $user->name }}</td>
                             <td class="px-4 py-4">{{ $user->email }}</td>
                             <td class="px-4 py-4">{{ $user->role }}</td>
                             <td class="px-4 py-4">
-                                <a href="{{ route('admin.users.edit', $user->id) }}" class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <a href="{{ route('admin.users.edit', $user->id) }}" class="text-blue-500 hover:text-blue-700">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
                                 <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" class="inline-block ml-2" id="delete-form-{{ $user->id }}">
                                     @csrf
                                     @method('DELETE')
@@ -55,15 +62,54 @@
                 </tbody>
             </table>
         </div>
+
         <!-- Pagination -->
         <div class="mt-4" id="pagination">
-            {{ $users->links() }}
+            {{ $users->appends(request()->query())->links() }}
         </div>
     </div>
 @endsection
 
 @section('scripts')
     <script>
+        document.getElementById('search').addEventListener('input', function() {
+            const searchQuery = this.value;
+
+            fetch('{{ route("admin.users.search") }}?search=' + searchQuery)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#user-table tbody');
+                    tableBody.innerHTML = '';
+                    if (data.users.length > 0){
+                        data.users.forEach(user => {
+                            const row = document.createElement('tr');
+                            row.classList.add('border-b', 'border-gray-300');
+                            
+                            row.innerHTML = `
+                                <td class="px-4 py-4">${user.name}</td>
+                                <td class="px-4 py-4">${user.email}</td>
+                                <td class="px-4 py-4">${user.role}</td>
+                                <td class="px-4 py-4">
+                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="text-blue-500 hover:text-blue-700">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" class="inline-block ml-2" id="delete-form-{{ $user->id }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmDelete('{{ $user->id }}')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-center">No users found</td></tr>';
+                    }
+                });
+        });
+
         function confirmDelete(userId) {
             Swal.fire({
                 title: 'Are you sure?',

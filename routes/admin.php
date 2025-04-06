@@ -63,6 +63,7 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get("user/edit/{user}", [UserController::class, 'edit'])->name('users.edit');
     Route::put("user/edit/{user}", [UserController::class, 'update'])->name('users.update');
     Route::delete("user/edit/{user}", [UserController::class, 'destroy'])->name('users.delete');
+    Route::get("user/search", [UserController:: class, 'search'])->name('users.search');
 
     // Timetable Management Routes
     Route::get('/timetables', [TimetableController::class, 'index'])->name('timetables_index');
