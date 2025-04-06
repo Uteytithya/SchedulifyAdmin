@@ -17,51 +17,6 @@
                 </select>
             </div>
 
-            <!-- Dropdown to select multiple groups based on the selected generation -->
-            <div id="group-selection" style="display: none;">
-                <label class="block text-sm font-medium mt-4">Select Groups</label>
-                <select id="group" name="groups[]" class="w-full p-2 border rounded mt-1" multiple>
-                    <!-- Options will be dynamically populated based on generation -->
-                </select>
-                <p class="text-gray-500 text-sm mt-1">Hold Ctrl (or Cmd on Mac) to select multiple groups </p>
-            </div>
-
-            <script>
-                // JavaScript to handle dynamic selection of multiple groups based on generation
-                document.getElementById('generation').addEventListener('change', function() {
-                    const generation = this.value;
-                    const groupSelection = document.getElementById('group-selection');
-                    const groupDropdown = document.getElementById('group');
-
-                    // Clear any existing group options
-                    groupDropdown.innerHTML = '';
-
-                    // If no generation is selected, hide the group dropdown
-                    if (!generation) {
-                        groupSelection.style.display = 'none';
-                        return;
-                    }
-
-                    // Get the groups that belong to the selected generation
-                    const groups = @json($studentGroups->groupBy('generation_year'));
-
-                    if (groups[generation]) {
-                        // Show the group dropdown
-                        groupSelection.style.display = 'block';
-
-                        // Populate the group dropdown with the correct groups
-                        groups[generation].forEach(group => {
-                            const option = document.createElement('option');
-                            option.value = group.id;
-                            option.textContent = group.department + ' - ' + group.name;
-                            groupDropdown.appendChild(option);
-                        });
-                    } else {
-                        groupSelection.style.display = 'none';
-                    }
-                });
-            </script>
-
             <!-- Term Input -->
             <div>
                 <label class="block text-sm font-medium">Term</label>
@@ -69,39 +24,22 @@
             </div>
 
             <!-- Courses (Checkbox max 6) -->
-            <div class="mb-5 col-span-2">
-                <label for="courses" class="block mb-2 text-md font-medium text-gray-900">Courses:</label>
-                <select name="courses[]" id="courses" multiple
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                    @foreach ($courses as $course)
-                        <option value="{{ $course->id }}"
-                            {{ (collect(old('courses'))->contains($course->id)) ? 'selected' : '' }}>
-                            {{ $course->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <p class="text-gray-500 text-sm mt-1">Hold Ctrl (or Cmd on Mac) to select multiple courses. (Max: 6)</p>
-            </div>
+            <div class="mb-5">
+                <label class="block mb-2 text-md font-medium text-gray-900">Courses (Select up to 6):</label>
+                <div class="selected-count text-sm text-gray-500 mb-2">Selected: <span id="selected-course-count">0</span>/6</div>
 
-            <!-- Room Info (for Admin's reference only) -->
-            <div>
-                <label class="block text-sm font-medium mb-1">Available Rooms</label>
-                <ul class="bg-gray-100 p-3 rounded">
-                    @foreach($rooms as $room)
-                        <li>{{ $room->name }} — Capacity: {{ $room->capacity }}</li>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-3 border border-gray-300 rounded-lg bg-white">
+                    @foreach ($courses->sortBy('name') as $course)
+                        <div class="flex items-start p-2 hover:bg-gray-50 rounded">
+                            <input type="checkbox" name="courses[]" id="course-{{ $course->id }}"
+                                value="{{ $course->id }}" class="course-checkbox mt-1"
+                                {{ (collect(old('courses'))->contains($course->id)) ? 'checked' : '' }}>
+                            <label for="course-{{ $course->id }}" class="ml-2 text-sm cursor-pointer">
+                                <div class="font-medium">{{ $course->name }}</div>
+                                <div class="text-xs text-gray-500">{{ $course->code ?? '' }}</div>
+                            </label>
+                        </div>
                     @endforeach
-                </ul>
-            </div>
-
-            <!-- Time Inputs -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium">Start Time</label>
-                    <input type="time" name="start_time" class="w-full p-2 border rounded" value="08:30" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium">End Time</label>
-                    <input type="time" name="end_time" class="w-full p-2 border rounded" value="16:15" required>
                 </div>
             </div>
 
@@ -110,10 +48,6 @@
                 <div>
                     <label class="block text-sm font-medium">Start Date</label>
                     <input type="date" name="start_date" class="w-full p-2 border rounded" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium">End Date</label>
-                    <input type="date" name="end_date" class="w-full p-2 border rounded" required>
                 </div>
             </div>
 
@@ -129,14 +63,58 @@
 
 @section('scripts')
     <script>
-        const courseSelect = document.getElementById('courses');
+        // Course selection limit
+        const courseCheckboxes = document.querySelectorAll('.course-checkbox');
+        const selectedCountElement = document.getElementById('selected-course-count');
 
-        courseSelect.addEventListener('change', function () {
-            const selectedOptions = [...this.selectedOptions];
-            if (selectedOptions.length > 6) {
-                alert('You can select up to 6 courses only.');
-                // Deselect the last selected item
-                selectedOptions[selectedOptions.length - 1].selected = false;
+        function updateSelectedCount() {
+            const selectedCount = document.querySelectorAll('.course-checkbox:checked').length;
+            selectedCountElement.textContent = selectedCount;
+
+            if (selectedCount >= 6) {
+                courseCheckboxes.forEach(checkbox => {
+                    if (!checkbox.checked) {
+                        checkbox.disabled = true;
+                    }
+                });
+            } else {
+                courseCheckboxes.forEach(checkbox => {
+                    checkbox.disabled = false;
+                });
+            }
+        }
+
+        courseCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+
+        // Initialize count
+        updateSelectedCount();
+
+        // Group selection
+        const generationSelect = document.getElementById('generation');
+        const groupSelectionDiv = document.getElementById('group-selection');
+        const groupSelect = document.getElementById('group');
+
+        generationSelect.addEventListener('change', function() {
+            if (this.value) {
+                // Show group selection
+                groupSelectionDiv.style.display = 'block';
+
+                // Populate groups based on generation
+                fetch(`/api/groups-by-generation/${this.value}`)
+                    .then(response => response.json())
+                    .then(groups => {
+                        groupSelect.innerHTML = '';
+                        groups.forEach(group => {
+                            const option = document.createElement('option');
+                            option.value = group.id;
+                            option.textContent = group.name;
+                            groupSelect.appendChild(option);
+                        });
+                    });
+            } else {
+                groupSelectionDiv.style.display = 'none';
             }
         });
     </script>

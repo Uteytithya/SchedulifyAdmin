@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Web\Auth\TimetableController;
 use App\Http\Controllers\Web\Auth\UserController;
 use App\Http\Controllers\Web\Auth\RoomController;
 use App\Http\Controllers\Web\Auth\StudentsGroupController;
@@ -52,13 +51,6 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::put('course/edit/{course}', [CourseController::class, 'update'])->name('course_edit_post');
     Route::delete('course/edit/{course}', [CourseController::class, 'destroy'])->name('course_delete_post');
 
-    Route::get('timetable', [TimetableController::class, 'index'])->name('timetable_index');
-    Route::get('timetable/create', [TimetableController::class, 'create'])->name('timetable_create');
-    Route::post('timetable/create', [TimetableController::class, 'store'])->name('timetable_create_post');
-    Route::get('timetable/edit/{timetable}', [TimetableController::class, 'edit'])->name('timetable_edit');
-    Route::put('timetable/edit/{timetable}', [TimetableController::class, 'update'])->name('timetable_edit_post');
-    Route::delete('timetable/edit/{timetable}', [TimetableController::class, 'destroy'])->name('timetable_delete_post');
-
     Route::get("user", [UserController::class, 'index'])->name('users.index');
     Route::get("user/create", [UserController::class, 'create'])->name('users.create');
     Route::post("user/create", [UserController::class, 'store'])->name('users.store');
@@ -74,4 +66,5 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::put('/timetables/{timetable}', [TimetableController::class, 'update'])->name('timetables_update');
     Route::delete('/timetables/{timetable}', [TimetableController::class, 'destroy'])->name('timetables_destroy');
     Route::get('/timetables/search', [TimetableController::class, 'search'])->name('timetables_search');
+    Route::get('/timetables/{timetable}/show', [TimetableController::class, 'show'])->name('timetables_show');
 });

@@ -8,16 +8,31 @@ use App\Models\Room;
 use App\Models\StudentGroup;
 use Illuminate\Http\Request;
 use App\Models\Timetables;
+use App\Services\TimetableSV;
 use Illuminate\Validation\Rule;
 
 class TimetableController extends Controller
 {
+
+    protected $timetableService;
+
+    public function __construct(TimetableSV $timetableService)
+    {
+        $this->timetableService = $timetableService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = Timetables::query();
+        $query = Timetables::with([
+            'studentGroup',
+            'scheduleSessions.room',
+            'scheduleSessions.course',
+            'scheduleSessions.sessionType',
+            'scheduleSessions.lecturer'
+        ]);
 
         // Search functionality
         if ($request->has('search')) {
@@ -48,7 +63,13 @@ class TimetableController extends Controller
             $query = $request->input('query');
             $sort = $request->input('sort', 'year');
 
-            $timetables = Timetables::when($query, function ($q) use ($query) {
+            $timetables = Timetables::with([
+                'studentGroup',
+                'scheduleSessions.room',
+                'scheduleSessions.course',
+                'scheduleSessions.sessionType',
+                'scheduleSessions.lecturer'
+            ])->when($query, function ($q) use ($query) {
                 return $q->where('year', 'LIKE', "%{$query}%")
                     ->orWhereHas('studentGroup', function ($q) use ($query) {
                         $q->where('name', 'LIKE', "%{$query}%");
@@ -64,6 +85,43 @@ class TimetableController extends Controller
         }
 
         return abort(403);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $timetable = Timetables::with([
+            'studentGroup',
+            'scheduleSessions.room',
+            'scheduleSessions.courseUser.course',
+            'scheduleSessions.courseUser.user',
+            'scheduleSessions.sessionType',
+
+        ])->findOrFail($id);
+
+        return view('admin.timetables.show', compact('timetable'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $timetable = Timetables::with([
+            'studentGroup',
+            'scheduleSessions.room',
+            'scheduleSessions.course',
+            'scheduleSessions.sessionType',
+            'scheduleSessions.lecturer'
+        ])->findOrFail($id);
+
+        $studentGroups = StudentGroup::all();
+        $rooms = Room::all();
+        $courses = Course::all();
+
+        return view('admin.timetables.edit', compact('timetable', 'studentGroups', 'rooms', 'courses'));
     }
 
 
@@ -83,58 +141,27 @@ class TimetableController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $validatedData = $request->validate([
             'generation' => 'required|integer',
-            'term' => 'required|in:1,2,3',
-            'course_ids' => 'required|array|max:6',
-            'course_ids.*' => 'exists:courses,id',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'term' => 'required|integer|between:1,3',
+            'courses' => 'required|array|max:6',
+            'start_date' => 'required|date'
         ]);
-
-        // Get all student groups from the selected generation
-        $groups = StudentGroup::where('generation_year', $data['generation'])->get();
-
-        foreach ($groups as $group) {
-            $timetable = Timetables::create([
-                'student_group_id' => $group->id,
-                'year' => $data['generation'],
-                'term' => $data['term'],
-                'start_date' => $data['start_date'],
-            ]);
-
+        try {
+            $this->timetableService->generateTimetable($validatedData);
+            return redirect()->route('admin.timetables_index')
+                ->with('success', 'Timetable generated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error generating timetable: ' . $e->getMessage());
         }
-
-        return redirect()->route('admin.timetables_index')->with('success', 'Timetable generated for all groups.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Timetables $timetable)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $timetable = Timetables::findOrFail($id);
-        $studentGroups = StudentGroup::all();
-        $rooms = Room::all();
-        $courses = Course::all();
-
-        return view('admin.timetables.edit', compact('timetable', 'studentGroups', 'rooms', 'courses'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $timetable = Timetables::findOrFail($id);
 
