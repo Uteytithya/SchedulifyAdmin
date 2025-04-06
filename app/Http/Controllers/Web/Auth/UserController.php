@@ -1,49 +1,134 @@
-@extends('layouts.layout')
+<?php
 
-@section('content')
-    <div class="container mx-auto p-6 mt-5">
-        <h1 class="text-3xl font-semibold mb-6">Timetable Details</h1>
+namespace App\Http\Controllers\Web\Auth;
 
-        <div class="bg-white shadow-md rounded p-4">
-            <h2 class="text-2xl font-semibold mb-4">Group: {{ $timetable->studentGroup->name }}</h2>
-            <p class="text-gray-600 mb-4">
-                <strong>Year:</strong> {{ $timetable->year }}<br>
-                <strong>Term:</strong> {{ $timetable->term }}<br>
-                <strong>Start Date:</strong> {{ date('M d, Y', strtotime($timetable->start_date)) }}
-            </p>
+use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\CourseUser;
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
-            <table class="min-w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm">
-                        <th class="border border-gray-300 py-2 px-4 text-center">Day</th>
-                        <th class="border border-gray-300 py-2 px-4 text-center">Time</th>
-                        <th class="border border-gray-300 py-2 px-4 text-center">Course</th>
-                        <th class="border border-gray-300 py-2 px-4 text-center">Lecturer</th>
-                        <th class="border border-gray-300 py-2 px-4 text-center">Room</th>
-                        <th class="border border-gray-300 py-2 px-4 text-center">Session Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($timetable->scheduleSessions as $session)
-                        <tr>
-                            <td class="border border-gray-300 py-2 px-4 text-center capitalize">{{ $session->day }}</td>
-                            <td class="border border-gray-300 py-2 px-4 text-center">
-                                {{ date('H:i', strtotime($session->start_time)) }} - {{ date('H:i', strtotime($session->end_time)) }}
-                            </td>
-                            <td class="border border-gray-300 py-2 px-4 text-center">{{ $session->courseUser->course->name }}</td>
-                            <td class="border border-gray-300 py-2 px-4 text-center">{{ $session->courseUser->user->name }}</td>
-                            <td class="border border-gray-300 py-2 px-4 text-center">{{ $session->room->name }}</td>
-                            <td class="border border-gray-300 py-2 px-4 text-center">{{ $session->sessionType->name }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="border border-gray-300 py-2 px-4 text-center text-gray-500">
-                                No sessions available for this timetable.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-@endsection
+class UserController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $users = User::paginate(5);
+        return view('users.index', compact('users'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $courses = Course::all();
+        return view('users.create', compact('courses'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+
+
+        $validated = $request->validate([
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'password' => ['required', 'string', 'min:8'],
+            'role' => ['required', 'string'],
+            'courses' => ['nullable', 'array'],
+            'courses.*' => ['exists:courses,id'],
+        ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role' => $request->role,
+        ]);
+        foreach ($request->courses as $courseId) {
+            CourseUser::create([
+                'id' => Str::uuid(),
+                'user_id' => $user->id,
+                'course_id' => $courseId,
+            ]);
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully');
+    }
+
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $user = User::findOrFail($id);
+        $courses = Course::all();
+        $userCourses = $user->courses->pluck('id')->toArray();
+
+        return view('users.edit', compact('user', 'courses', 'userCourses'));
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     */
+
+    public function update(Request $request, string $id)
+    {
+        // Find the user
+        $user = User::findOrFail($id);
+
+        // Validate input using the Rule class
+        $validated = $request->validate([
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($id)],
+            'password' => ['nullable', 'string', 'min:6'],
+            'role' => ['required', 'string'],
+        ]);
+
+        // Update user attributes
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->role = $validated['role'];
+
+        foreach ($request->courses as $courseId) {
+            CourseUser::create([
+                'id' => Str::uuid(),
+                'user_id' => $user->id,
+                'course_id' => $courseId,
+            ]);
+        }
+
+        // Save user and sync courses
+        $user->save();
+        $user->courses()->sync($request->courses ?? []);
+
+        // Redirect back with success message
+        return redirect()->route('admin.users.index')->with('success', 'User updated!');
+    }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+    }
+}
