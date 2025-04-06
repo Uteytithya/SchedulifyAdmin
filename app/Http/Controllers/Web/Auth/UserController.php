@@ -123,4 +123,18 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+    
+        // Fetch users based on the search query
+        $users = User::where('name', 'like', "%{$search}%")
+                     ->orWhere('email', 'like', "%{$search}%")
+                     ->get();
+    
+        return response()->json([
+            'users' => $users
+        ]);
+    }
 }

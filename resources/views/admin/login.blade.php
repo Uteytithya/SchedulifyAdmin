@@ -30,7 +30,10 @@
                     class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300
                     appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0
                     focus:border-blue-600 peer"
-                    placeholder=" " required />
+                    required
+                    oninvalid="this.setCustomValidity('Please enter your email address')"
+                    oninput="this.setCustomValidity('')"
+                    />
                 <label for="floating_email"
                     class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300
                     transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4
@@ -44,7 +47,10 @@
                     class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300
                     appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0
                     focus:border-blue-600 peer"
-                    placeholder=" " required />
+                    required 
+                    oninvalid="this.setCustomValidity('Please enter your password')"
+                    oninput="this.setCustomValidity('')"
+                    />
                 <label for="floating_password"
                     class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300
                     transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4
@@ -57,7 +63,7 @@
                 <button type="submit"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
                     font-medium rounded-lg text-sm w-1/3 px-5 py-2.5 text-center">
-                    Submit
+                    Login
                 </button>
             </div>
         </form>
