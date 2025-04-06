@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\Web\Auth\SessionRequestController;
+use App\Http\Controllers\Web\Auth\TimetableController;
 use App\Http\Controllers\Web\Auth\UserController;
 use App\Http\Controllers\Web\Auth\RoomController;
 use App\Http\Controllers\Web\Auth\StudentsGroupController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\Auth\CourseController;
 use App\Http\Controllers\Web\Auth\AdminAuthController;
-use App\Http\Controllers\Web\Auth\TimetableController;
+
+use App\Models\SessionRequest;
+
 
 /*///////////////////////////////////////////
 *
@@ -50,6 +54,8 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get('course/edit/{course}', [CourseController::class, 'edit'])->name('course_edit');
     Route::put('course/edit/{course}', [CourseController::class, 'update'])->name('course_edit_post');
     Route::delete('course/edit/{course}', [CourseController::class, 'destroy'])->name('course_delete_post');
+
+    Route::get('/request', [SessionRequestController::class, 'index'])->name('requests.index');
 
     Route::get("user", [UserController::class, 'index'])->name('users.index');
     Route::get("user/create", [UserController::class, 'create'])->name('users.create');

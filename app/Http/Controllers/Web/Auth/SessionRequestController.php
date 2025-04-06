@@ -13,7 +13,8 @@ class SessionRequestController extends Controller
      */
     public function index()
     {
-        //
+        $sessionRequests=SessionRequest::all();
+        return view('admin.session-request.index', ['requests'=>$sessionRequests]);
     }
 
     /**
