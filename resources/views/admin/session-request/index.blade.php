@@ -10,19 +10,6 @@
     <!-- Page Title & Create Button -->
     <div class="flex justify-between items-center mb-6 mt-2">
         <h1 class="text-3xl font-semibold">Request List</h1>
-        <a href="{{ route('admin.rooms_create') }}" class="inline-block bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition-colors">
-            Create Request
-        </a>
-    </div>
-
-    <!-- Search & Sorting -->
-    <div class="flex items-center space-x-4 mb-4">
-        <input type="text" id="search" placeholder="Search Request..." class="pl-10 p-2 rounded-lg border w-64 bg-gray-100">
-        <select id="sort" class="p-2 border rounded">
-            <option value="name">Sort by Name</option>
-            <option value="floor">Sort by Floor</option>
-            <option value="capacity">Sort by Capacity</option>
-        </select>
     </div>
 
     <!-- Table -->
@@ -49,7 +36,7 @@
                                     {{ \Carbon\Carbon::parse($request->new_end_time)->format('h:i') }}
                                 </td>
                                 <td class="w-1/5 px-4 py-3">{{ $request->requested_date->format('Y-m-d') }}</td>
-                                <td class="w-1/5 px-4 py-3 text-right space-x-2">
+                                <td class="w-1/5 px-4 py-3 text-right space-x-2 flex">
                                     <button onclick="openModal('{{ $request->id }}', 'approve')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Approve</button>
                                     <button onclick="openModal('{{ $request->id }}', 'reject')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">Reject</button>
                                 </td>
@@ -87,8 +74,6 @@
         document.getElementById('modalRequestId').value = requestId;
         document.getElementById('modalActionType').value = actionType;
         document.getElementById('modalTitle').textContent = actionType === 'approve' ? 'Approve Request' : 'Reject Request';
-        // Optionally set form action dynamically if needed
-        // document.getElementById('modalForm').action = '/your-submit-route';
     }
 
     function closeModal() {

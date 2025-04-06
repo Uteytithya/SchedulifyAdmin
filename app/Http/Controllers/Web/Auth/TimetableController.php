@@ -22,7 +22,7 @@ class TimetableController extends Controller
         // Search functionality
         if ($request->has('search')) {
             $query->where('year', 'LIKE', '%' . $request->search . '%')
-                ->orWhereHas('studentGroup', function ($q) use ($request) {
+                ->orWhereHas('students_groups', function ($q) use ($request) {
                     $q->where('name', 'LIKE', '%' . $request->search . '%');
                 });
         }
