@@ -8,60 +8,37 @@ use App\Models\SessionRequest;
 
 class SessionRequestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $sessionRequests=SessionRequest::all();
-        return view('admin.session-request.index', ['requests'=>$sessionRequests]);
+        $sessionRequests = SessionRequest::orderBy('requested_date', 'desc')->get();
+        return view('admin.requests.index', ['requests' => $sessionRequests]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    
+    public function update(Request $request, $id)
     {
-        //
+        $sessionRequest = SessionRequest::findOrFail($id);
+        $oldStatus = $sessionRequest->status;
+        $sessionRequest->status = $request->status;
+    
+        if ($request->status == 'approved') {
+            $room = $sessionRequest->room;
+            if ($room) {
+                $room->is_active = 0;
+                $room->save();
+            }
+        }
+    
+        if ($request->status == 'denied') {
+            $room = $sessionRequest->room;
+            if ($room) {
+                $room->is_active = 1;
+                $room->save();
+            }
+        }
+        
+        $sessionRequest->save();
+    
+        return redirect()->back()->with('success', 'Request ' . $request->status . ' successfully.');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(SessionRequest $SessionRequest)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(SessionRequest $SessionRequest)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, SessionRequest $SessionRequest)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(SessionRequest $SessionRequest)
-    {
-        //
-    }
+    
 }

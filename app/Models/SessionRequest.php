@@ -27,7 +27,7 @@ class SessionRequest extends Model
         'request_type' => 'string',
         'created_at' => 'datetime',
     ];
-    protected $fillable = ['user_id', 'session_type_id', 'course_id', 'timetable_id', 'requested_date', 'new_start_time', 'new_end_time', 'reason', 'request_type', 'status', 'created_at'];
+    protected $fillable = ['user_id', 'session_type_id', 'course_id', 'timetable_id','room_id' , 'requested_date', 'new_start_time', 'new_end_time', 'reason', 'request_type', 'status', 'created_at'];
 
     public function user()
     {
@@ -47,5 +47,10 @@ class SessionRequest extends Model
     public function timetable()
     {
         return $this->belongsTo(Timetables::class, 'timetable_id');
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id');
     }
 }
