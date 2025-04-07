@@ -57,6 +57,8 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get('course/edit/{course}', [CourseController::class, 'edit'])->name('course_edit');
     Route::put('course/edit/{course}', [CourseController::class, 'update'])->name('course_edit_post');
     Route::delete('course/edit/{course}', [CourseController::class, 'destroy'])->name('course_delete_post');
+    Route::get('/courses/search', [CourseController::class, 'search'])->name('courses_search');
+
 
     Route::get('/request', [SessionRequestController::class, 'index'])->name('requests.index');
 
