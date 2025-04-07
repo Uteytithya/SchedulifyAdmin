@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::get('/timetable/{id}', [TimetableController::class, 'show']);
 
     Route::post('request', [SessionRequestController::class, 'store']);
+    Route::get('request/{user_id}', [SessionRequestController::class, 'show']);
 
     Route::get('student-groups', [StudentsGroupController::class, 'index']);
 

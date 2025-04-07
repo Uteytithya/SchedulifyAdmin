@@ -39,11 +39,12 @@
 
 
       <li>
-        <a href="{{route("admin.requests.index")}}" class="{{ request()->is('admin/auth/request*') ? $activeStyle : '' }} {{$style}}">
-            <i class="fa-solid fa-comment-dots"></i>
-            <span class="flex-1 ms-3 whitespace-nowrap">Requests</span>
+         <a href="{{ route('admin.requests_index') }}" class="{{ request()->is('admin/auth/requests*') ? $activeStyle : '' }} {{$style}}">
+             <i class="fa-solid fa-comment-dots"></i>
+             <span class="flex-1 ms-3 whitespace-nowrap">Requests</span>
          </a>
-      </li>
+     </li>
+     
 
 
 

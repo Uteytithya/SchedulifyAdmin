@@ -11,7 +11,6 @@ use App\Http\Controllers\Web\Auth\AdminAuthController;
 
 use App\Models\SessionRequest;
 
-
 /*///////////////////////////////////////////
 *
 *           PUBLIC API
@@ -31,6 +30,10 @@ Route::post('login', [AdminAuthController::class, 'login'])->name('login_post');
 Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($router) {
     Route::get('dashboard', [AdminAuthController::class, 'dashboard'])->name('dashboard');
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+    Route::get('/requests', [SessionRequestController::class, 'index'])->name('requests_index');
+    Route::put('/requests/{id}', [SessionRequestController::class, 'update'])->name('requests_update');
+
     // Room Management Routes
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms_index'); // List rooms
     Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms_create'); // Show create form

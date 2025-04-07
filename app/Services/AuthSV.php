@@ -44,6 +44,7 @@ class AuthSV
 
         $guard = $role === 'user' ? 'api' : 'admin';
         if (!$token = Auth::guard($guard)->claims([
+            'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'role' => $user->role,
