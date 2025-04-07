@@ -18,17 +18,41 @@ class TimetableController extends BaseAPI
     /**
      * Display a listing of the resource.
      */
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         try {
-            $params = [];
-            // $params['status'] = $request->boolean("status");
-            $params['order_by'] = $request->order_by;
-            $params['filter_by'] = $request->filter_by;
-            $params['search'] = $request->search;
-            $params['columns'] = $request->columns;
-            $data = $this->TimetableService->getAllTimetables($params);
-            return $this->successResponse($data, 'Get all timetable successfully');
+            $timetables = Timetables::with([
+                'studentGroup',
+                'scheduleSessions.room',
+                'scheduleSessions.courseUser.course',
+                'scheduleSessions.courseUser.user',
+                'scheduleSessions.sessionType'
+            ])->paginate(10); // Adjust pagination as needed
+
+            return $this->successResponse($timetables, 'Get all timetables with sessions successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(String $id)
+    {
+        try {
+            $timetable = Timetables::with([
+                'studentGroup',
+                'scheduleSessions.room',
+                'scheduleSessions.courseUser.course',
+                'scheduleSessions.courseUser.user',
+                'scheduleSessions.sessionType'
+            ])->findOrFail($id);
+
+            return $this->successResponse($timetable, 'Get timetable with sessions successfully');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
@@ -48,19 +72,6 @@ class TimetableController extends BaseAPI
     public function store(Request $request)
     {
         //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Timetables $timetable, String $id)
-    {
-        try {
-            $data = $this->TimetableService->getTimetableByID($id);
-            return $this->successResponse($data, 'Get timetable successfully');
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), $e->getCode());
-        }
     }
 
     /**

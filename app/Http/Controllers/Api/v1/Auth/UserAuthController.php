@@ -19,7 +19,7 @@ class UserAuthController extends BaseAPI
     // Register User
     public function register(StoreUserRequest $request)
     {
-        try{
+        try {
             $params = [];
             $params['email'] = $request->email;
             $params['password'] = $request->password;
@@ -30,7 +30,6 @@ class UserAuthController extends BaseAPI
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
-
     }
     // Login User
     public function login(Request $request)
@@ -52,6 +51,56 @@ class UserAuthController extends BaseAPI
         try {
             $token = $this->AuthSV->refreshToken();
             return $token;
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Get the authenticated user's data along with relationships.
+     */
+    /**
+     * Get the authenticated user's data along with relationships.
+     */
+    public function getUserData(Request $request)
+    {
+        try {
+            // Get the authenticated user
+            $user = $request->user();
+
+            // Load relationships for the user
+            $user->load([
+                'courses',              // Courses the user is enrolled in
+                'notifications',        // Notifications for the user
+                'requests',             // Session requests made by the user
+                'lecturerAvailability', // Lecturer availability (if applicable)
+                'sessions',             // Sessions associated with the user
+            ]);
+
+            return $this->successResponse($user, 'User data retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Get only the authenticated user's sessions.
+     */
+    public function getUserSessions(Request $request)
+    {
+        try {
+            // Get the authenticated user
+            $user = $request->user();
+
+            // Query the user's sessions
+            $sessions = $user->sessions()->with([
+                'room',              // Include room details
+                'sessionType',       // Include session type details
+                'courseUser.course', // Include course details
+                'courseUser.user'    // Include lecturer details
+            ])->get();
+
+            return $this->successResponse($sessions, 'User sessions retrieved successfully');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }

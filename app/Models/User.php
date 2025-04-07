@@ -98,6 +98,18 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Course::class, 'course_user', 'user_id', 'course_id');
     }
 
+    public function sessions()
+    {
+        return $this->hasManyThrough(
+            ScheduleSession::class,
+            CourseUser::class,
+            'user_id',         // Foreign key on CourseUser table
+            'course_user_id',  // Foreign key on ScheduleSession table
+            'id',              // Local key on User table
+            'id'               // Local key on CourseUser table
+        );
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
