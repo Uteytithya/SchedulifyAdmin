@@ -100,7 +100,19 @@ class UserAuthController extends BaseAPI
                 'courseUser.user'    // Include lecturer details
             ])->get();
 
-            return $this->successResponse($sessions, 'User sessions retrieved successfully');
+            $data = $sessions->map(function ($session) {
+                return [
+                    'id' => $session->id,
+                    'day' => ucfirst($session->day),
+                    'start_time' => $session->start_time,
+                    'end_time' => $session->end_time,
+                    'room' => $session->room->name ?? null,
+                    'course' => $session->courseUser->course->name ?? null,
+                    'lecturer' => $session->courseUser->user->name ?? null,
+                ];
+            });
+
+            return $this->successResponse($data, 'User sessions retrieved successfully');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
