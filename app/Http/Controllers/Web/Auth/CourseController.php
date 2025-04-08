@@ -72,4 +72,14 @@ class CourseController extends Controller
         $course->delete();
         return redirect()->route('admin.course');
     }
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Fetch users based on the search query
+        $courses = Course::where('name', 'like', "%{$search}%")->get();
+        return response()->json([
+            'courses' => $courses
+        ]);
+    }
 }
