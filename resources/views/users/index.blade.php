@@ -72,6 +72,7 @@
 
 @section('scripts')
     <script>
+
         document.getElementById('search').addEventListener('input', function() {
             const searchQuery = this.value;
 
@@ -81,21 +82,25 @@
                     const tableBody = document.querySelector('#user-table tbody');
                     tableBody.innerHTML = '';
                     if (data.users.length > 0){
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                         data.users.forEach(user => {
                             const row = document.createElement('tr');
                             row.classList.add('border-b', 'border-gray-300');
+
+                            const editUrl = `/admin/auth/user/${user.id}/edit`;
+                            const deleteUrl = `/admin/auth/user/edit/${user.id}`;
                             
                             row.innerHTML = `
                                 <td class="px-4 py-4">${user.name}</td>
                                 <td class="px-4 py-4">${user.email}</td>
                                 <td class="px-4 py-4">${user.role}</td>
                                 <td class="px-4 py-4">
-                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="text-blue-500 hover:text-blue-700">
+                                    <a href="${editUrl}" class="text-blue-500 hover:text-blue-700">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" class="inline-block ml-2" id="delete-form-{{ $user->id }}">
-                                        @csrf
-                                        @method('DELETE')
+                                    <form action="${deleteUrl}" method="POST" class="inline-block ml-2" id="delete-form-{{ $user->id }}">
+                                        <input type="hidden" name="_token" value="${csrfToken}">
+                                        <input type="hidden" name="_method" value="DELETE">
                                         <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmDelete('{{ $user->id }}')">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
