@@ -147,15 +147,10 @@ class TimetableController extends Controller
             'courses' => 'required|array|max:6',
             'start_date' => 'required|date'
         ]);
-        try {
-            $this->timetableService->generateTimetable($validatedData);
-            return redirect()->route('admin.timetables_index')
-                ->with('success', 'Timetable generated successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Error generating timetable: ' . $e->getMessage());
-        }
+
+        $this->timetableService->generateTimetable($validatedData);
+        return redirect()->route('admin.timetables_index')
+            ->with('success', 'Timetable generated successfully!');
     }
 
     /**

@@ -39,6 +39,7 @@ class TimetableSV extends BaseService
 
     public function generateTimetable($params): array
     {
+        $count = 1;
         $year = $params['generation'];
         $term = $params['term'];
         $courseIds = $params['courses'];
@@ -55,19 +56,17 @@ class TimetableSV extends BaseService
         $lecturerAvailabilities = LecturerAvailability::all()->groupBy('lecturer_id');
         $this->initializeAvailability($rooms, $lecturerAvailabilities);
 
-        // Fallback to all users with role "user" if no lecturer availability
-        if (empty($this->lecturerAvailability)) {
-            $lecturers = User::where('role', 'user')->get();
-        }
-
         $this->timetable = [];
 
         $studentGroups = StudentGroup::where('generation_year', '=', $year)->get();
-
         $sessionTypes = SessionType::all();
 
         // Create one timetable per group
         foreach ($studentGroups as $group) {
+            // Reset group-specific variables
+            $courseUserMap = []; // Map to track assigned users for each course
+            $courseDayTrack = []; // Track courses scheduled for specific days
+
             $timetable = Timetables::create([
                 'id' => Str::uuid(),
                 'student_group_id' => $group->id,
@@ -75,30 +74,21 @@ class TimetableSV extends BaseService
                 'term' => $term,
                 'start_date' => $startDate,
             ]);
-
-            $courseDayTrack = []; // Track courses scheduled for specific days
-
+            $count++;
             // Schedule all selected courses for this timetable
             foreach ($selectedCourses as $course) {
+                // Assign a user to the course if not already assigned
+                if (!isset($courseUserMap[$course->id])) {
+                    $courseUserMap[$course->id] = CourseUser::where('course_id', $course->id)->inRandomOrder()->first();
+                }
+                $courseUser = $courseUserMap[$course->id];
                 foreach ($sessionTypes as $sessionType) {
                     $scheduled = false;
 
                     // Iterate over days to find a valid day for scheduling
                     foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as $day) {
-                        // Skip if the course is already scheduled for this day
-                        if (isset($courseDayTrack[$course->id]) && in_array($day, $courseDayTrack[$course->id])) {
-                            continue;
-                        }
-
-                        // Prevent scheduling on consecutive days
-                        $lastScheduledDays = $courseDayTrack[$course->id] ?? [];
-                        $lastScheduledDay = end($lastScheduledDays);
-                        if ($lastScheduledDay && $this->isConsecutiveDay($lastScheduledDay, $day)) {
-                            continue;
-                        }
-
                         // Schedule the session
-                        $this->scheduleSession($course, $sessionType, $timetable, $day);
+                        $this->scheduleSession($count, $course, $sessionType, $timetable, $courseUser);
 
                         // Track the day for this course
                         $courseDayTrack[$course->id][] = $day;
@@ -112,85 +102,125 @@ class TimetableSV extends BaseService
                     }
                 }
             }
+
+            // Add the generated timetable to the list
+            $this->timetable[] = $timetable;
         }
 
         return $this->timetable;
     }
 
-    protected function isConsecutiveDay(string $lastDay, string $currentDay): bool
+    protected function scheduleSession($counter, $course, $sessionType, $timetable, $courseUser): void
     {
         $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-        $lastDayIndex = array_search($lastDay, $days);
-        $currentDayIndex = array_search($currentDay, $days);
+        // Get the current count for this course (this should be scoped by timetable)
+        $scheduledSessionsCount = ScheduleSession::where('timetable_id', $timetable->id)
+            ->where('course_user_id', $courseUser->id)
+            ->count();
 
-        return abs($lastDayIndex - $currentDayIndex) === 1;
-    }
-    // Modified to remove $group parameter since it's accessible via timetable
-    protected function scheduleSession($course, $sessionType, $timetable, $day): void
-    {
-        // Find available timeslot for the given day
-        $availableSlot = $this->findAvailableTimeSlotForDay($timetable->id, $day);
-        if ($availableSlot) {
-            $startTime = $availableSlot;
-            $endTime = $startTime + 1.5; // 1.5 hours (90 minutes)
+        // If required sessions already scheduled, do nothing.
+        if ($scheduledSessionsCount >= $course->credit) {
+            return;
+        }
 
-            // Format times for database check
-            $formattedStartTime = $this->formatTime($startTime);
-            $formattedEndTime = $this->formatTime($endTime);
-
-            // Find an available room by checking for existing bookings
-            $room = $this->findAvailableRoomForTimeSlot($day, $formattedStartTime, $formattedEndTime);
-
-            if ($room) {
-                // Check for overlapping sessions in the same timetable
-                $overlappingSession = ScheduleSession::where('timetable_id', $timetable->id)
-                    ->where('day', $day)
-                    ->where(function ($query) use ($formattedStartTime, $formattedEndTime) {
-                        $query->where(function ($q) use ($formattedStartTime, $formattedEndTime) {
-                            $q->where('start_time', '<', $formattedEndTime)
-                                ->where('end_time', '>', $formattedStartTime);
-                        });
-                    })
-                    ->exists();
-
-                if ($overlappingSession) {
-                    // Log conflict if overlapping session exists
-                    $this->logConflict($timetable->student_group_id, $course->id, $sessionType->id, 'Overlapping session detected');
-                    return;
-                }
-
-                // Create the session
-                $courseUser = CourseUser::where('course_id', $course->id)->inRandomOrder()->first();
+        if ($course->credit == 1) {
+            // For 1-credit courses, always schedule a session in Cosmos Hall.
+            $cosmosHall = Room::where('name', 'like', 'Cosmos Hall')->first();
+            if ($cosmosHall) {
+                // Choose a fixed slot. You may decide to always use the first available slot.
+                $fixedSlot = ['day' => 'wednesday', 'start_time' => '08:30:00', 'end_time' => '10:00:00'];
                 ScheduleSession::create([
                     'id' => Str::uuid(),
                     'timetable_id' => $timetable->id,
                     'course_user_id' => $courseUser->id,
-                    'room_id' => $room->id,
-                    'day' => $day,
-                    'start_time' => $formattedStartTime,
-                    'end_time' => $formattedEndTime,
+                    'room_id' => $cosmosHall->id,
+                    'day' => $fixedSlot['day'],
+                    'start_time' => $fixedSlot['start_time'],
+                    'end_time' => $fixedSlot['end_time'],
                     'status' => 'approved',
                     'session_type_id' => $sessionType->id,
                 ]);
+                // Increment the counter so that the course is marked as scheduled for this timetable.
+                $scheduledSessionsCount++;
+            } else {
+                // Optionally log a conflict or handle the situation if Cosmos Hall doesn't exist.
+                $this->logConflict($timetable->student_group_id, $course->id, $sessionType->id, 'Cosmos Hall not available');
+            }
+            // Always return here so that the fixed slot logic for 1-credit courses does not continue.
+            return;
+        }
+
+        // For 2- or 3-credit courses:
+        $isTheoryScheduled = false;
+        foreach ($days as $day) {
+            if ($day === 'wednesday') {
+                continue;
+            }
+            // Check if this day already has many sessions in the current timetable.
+            $existingSessions = ScheduleSession::where('timetable_id', $timetable->id)
+                ->where('day', $day)
+                ->count();
+            if ($existingSessions >= 4) {
+                continue;
+            }
+
+            $availableSlot = $this->findAvailableTimeSlotForDay($timetable->id, $day);
+            if (!$availableSlot) {
+                continue;
+            }
+
+            $startTime = $availableSlot;
+            $endTime = $startTime + 1.5;
+            $formattedStartTime = $this->formatTime($startTime);
+            $formattedEndTime = $this->formatTime($endTime);
+
+            $room = $this->findAvailableRoomForTimeSlot($timetable->id, $day, $formattedStartTime, $formattedEndTime);
+            if (!$room) {
+                continue;
+            }
+
+            $currentSessionType = 'Lab';
+            if ($course->credit == 3 && !$isTheoryScheduled) {
+                $currentSessionType = 'Theory';
+                $isTheoryScheduled = true;
+            }
+
+            ScheduleSession::create([
+                'id' => Str::uuid(),
+                'timetable_id' => $timetable->id,
+                'course_user_id' => $courseUser->id,
+                'room_id' => $room->id,
+                'day' => $day,
+                'start_time' => $formattedStartTime,
+                'end_time' => $formattedEndTime,
+                'status' => 'approved',
+                'session_type_id' => SessionType::where('name', $currentSessionType)->first()->id,
+            ]);
+            $scheduledSessionsCount++;
+
+            if ($scheduledSessionsCount >= $course->credit) {
+                // Instead of returning immediately, you might log the fact and break out of day loop
+                break;
             }
         }
     }
 
     /**
-     * Find a room that isn't already booked during this time slot
+     * Modified to scope the search to the current timetable
      */
-    protected function findAvailableRoomForTimeSlot($day, $startTime, $endTime): ?Room
+    protected function findAvailableRoomForTimeSlot($timetableId, $day, $startTime, $endTime): ?Room
     {
-        // Get all active rooms
         $availableRooms = Room::where('is_active', true)
-            ->whereDoesntHave('scheduleSessions', function ($query) use ($day, $startTime, $endTime) {
-                $query->where('day', $day)
-                    ->where(function ($q) use ($startTime, $endTime) {
-                        // Check for overlapping sessions
-                        $q->where(function ($inner) use ($startTime, $endTime) {
-                            $inner->where('start_time', '<', $endTime)
-                                ->where('end_time', '>', $startTime);
-                        });
+            ->where(function ($query) use ($timetableId, $day, $startTime, $endTime) {
+                // Always allow Cosmos Hall regardless of existing sessions.
+                $query->whereRaw("`name` COLLATE utf8mb4_unicode_ci like ?", ['Cosmos Hall'])
+                    ->orWhereDoesntHave('scheduleSessions', function ($q) use ($timetableId, $day, $startTime, $endTime) {
+                        $q->where('timetable_id', $timetableId)
+                            ->where('day', $day)
+                            ->where(function ($subQ) use ($startTime, $endTime) {
+                                $subQ->where('start_time', '<', $endTime)
+                                    ->where('end_time', '>', $startTime);
+                            });
                     });
             })
             ->inRandomOrder()
@@ -271,17 +301,6 @@ class TimetableSV extends BaseService
         return sprintf('%02d:%02d:00', $hours, $minutes);
     }
 
-    protected function calculateSessionDuration($course, $sessionType): int
-    {
-        // Logic to calculate duration based on course credits and session type
-        // For example: Lectures might be 2 hours, labs 3 hours, etc.
-        if ($sessionType->name === 'Lecture') {
-            return min(2, $course->credit);
-        } elseif ($sessionType->name === 'Lab') {
-            return min(3, $course->credit * 1.5);
-        }
-        return 1; // Default 1 hour
-    }
 
     protected function logConflict($groupId, $courseId, $sessionTypeId, $reason): void
     {
@@ -293,45 +312,6 @@ class TimetableSV extends BaseService
             'reason' => $reason,
             'status' => 'unresolved',
         ]);
-    }
-
-    public function resolveConflict($conflictId, $newRoomId = null, $newLecturerId = null, $newTimeSlot = null): void
-    {
-        $conflict = SessionRequest::findOrFail($conflictId);
-
-        $group = StudentGroup::find($conflict->student_group_id);
-        $course = Course::find($conflict->course_id);
-        $sessionType = SessionType::find($conflict->session_type_id);
-
-        $room = $newRoomId ? Room::find($newRoomId) : Room::where('is_active', '=', '1')->inRandomOrder()->first();
-        $lecturerId = $newLecturerId ?? User::where('role', 'user')
-            ->whereHas('lecturerAvailability', function ($query) use ($room, $conflict) {
-                $query->where('day', 'monday')
-                    ->where('start_time', '<=', $conflict->new_start_time)
-                    ->where('end_time', '>=', $conflict->new_end_time);
-            })
-            ->inRandomOrder()
-            ->first();
-        $timeSlot = $newTimeSlot ?? $this->findAvailableTimeSlot($room, $lecturerId);
-
-        if ($room && $lecturerId && $timeSlot !== null) {
-            ScheduleSession::create([
-                'id' => Str::uuid(),
-                'session_type_id' => $sessionType->id,
-                'course_id' => $course->id,
-                'timetable_id' => $conflict->timetable_id,
-                'room_id' => $room->id,
-                'start_time' => sprintf('%02d:00:00', $timeSlot),
-                'end_time' => sprintf('%02d:00:00', $timeSlot + 1),
-                'day' => 'monday',
-                'status' => 'approved',
-            ]);
-
-            $this->updateRoomAvailability($room);
-            $conflict->update(['status' => 'resolved']);
-        } else {
-            throw new Exception('Unable to resolve conflict');
-        }
     }
 
     protected function findAvailableTimeSlot($room, $lecturerId): ?int
@@ -347,23 +327,5 @@ class TimetableSV extends BaseService
             }
         }
         return null;
-    }
-
-    protected function updateRoomAvailability($room): void
-    {
-        Room::where('id', '=', $room->id)
-            ->update(['is_active' => false]);
-    }
-
-
-    protected function isRoomAvailable($roomId, $startTime, $endTime): bool
-    {
-        $dayIndex = 0; // Assuming Monday for simplicity
-        for ($hour = $startTime; $hour < $endTime; $hour++) {
-            if (!($this->roomAvailability[$roomId][$dayIndex][$hour] ?? false)) {
-                return false;
-            }
-        }
-        return true;
     }
 }
