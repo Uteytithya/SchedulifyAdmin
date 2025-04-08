@@ -14,8 +14,13 @@ class StudentGroup extends Model
     protected $fillable = ['name', 'generation_year', 'department', 'created_at'];
     protected $table = 'students_groups'; // Explicitly set the table name
 
-    public function timetables()
+    public function timetable()
     {
-        return $this->hasMany(Timetables::class, 'group_id');
+        return $this->hasOne(Timetables::class, 'student_group_id');
+    }
+
+    public function courseUser()
+    {
+        return $this->hasMany(CourseUser::class, 'student_group_id');
     }
 }

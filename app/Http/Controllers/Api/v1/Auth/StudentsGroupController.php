@@ -53,12 +53,38 @@ class StudentsGroupController extends BaseAPI
     /**
      * Display the specified resource.
      */
-    public function show(StudentGroup $students_group, String $id)
+
+    public function show(String $id)
     {
         try {
-            $data = $this->StudentGroupService->getStudentGroupById($id);
-            return $this->successResponse($data, "get student group by id successfully");
-        }catch (\Exception $e){
+            // Fetch the student group by ID with its timetable and related data
+            $studentGroup = StudentGroup::with('timetable.scheduleSessions.courseUser.course', 'timetable.scheduleSessions.room')
+                ->findOrFail($id);
+
+            // Format the response data
+            $data = [
+                'id' => $studentGroup->id,
+                'name' => $studentGroup->name,
+                'generation_year' => $studentGroup->generation_year,
+                'department' => $studentGroup->department,
+                'timetable' => $studentGroup->timetable ? [
+                    'id' => $studentGroup->timetable->id,
+                    'year' => $studentGroup->timetable->year,
+                    'term' => $studentGroup->timetable->term,
+                    'schedule_sessions' => $studentGroup->timetable->scheduleSessions->map(function ($session) {
+                        return [
+                            'day' => ucfirst($session->day),
+                            'start_time' => $session->start_time,
+                            'end_time' => $session->end_time,
+                            'course' => $session->courseUser->course->name ?? null,
+                            'room' => $session->room->name ?? null,
+                        ];
+                    }),
+                ] : null,
+            ];
+
+            return $this->successResponse($data, "Get student group by ID successfully");
+        }catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }

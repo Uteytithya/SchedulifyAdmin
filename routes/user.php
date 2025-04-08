@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::get('/user/sessions', [UserAuthController::class, 'getUserSessions']);
 
     Route::get('/timetable', [TimetableController::class, 'index']);
-    Route::get('/timetable/{id}', [TimetableController::class, 'show']);
+    Route::get('/timetable/{id}', [StudentsGroupController::class, 'show']);
 
     Route::post('request', [SessionRequestController::class, 'store']);
     Route::get('request/{user_id}', [SessionRequestController::class, 'show']);

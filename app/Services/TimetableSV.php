@@ -62,8 +62,7 @@ class TimetableSV extends BaseService
 
         $this->timetable = [];
 
-        $studentGroups = StudentGroup::where('generation_year', '=', $year)
-            ->get();
+        $studentGroups = StudentGroup::where('generation_year', '=', $year)->get();
 
         $sessionTypes = SessionType::all();
 
@@ -77,10 +76,40 @@ class TimetableSV extends BaseService
                 'start_date' => $startDate,
             ]);
 
+            $courseDayTrack = []; // Track courses scheduled for specific days
+
             // Schedule all selected courses for this timetable
             foreach ($selectedCourses as $course) {
                 foreach ($sessionTypes as $sessionType) {
-                    $this->scheduleSession($course, $sessionType, $timetable);
+                    $scheduled = false;
+
+                    // Iterate over days to find a valid day for scheduling
+                    foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as $day) {
+                        // Skip if the course is already scheduled for this day
+                        if (isset($courseDayTrack[$course->id]) && in_array($day, $courseDayTrack[$course->id])) {
+                            continue;
+                        }
+
+                        // Prevent scheduling on consecutive days
+                        $lastScheduledDays = $courseDayTrack[$course->id] ?? [];
+                        $lastScheduledDay = end($lastScheduledDays);
+                        if ($lastScheduledDay && $this->isConsecutiveDay($lastScheduledDay, $day)) {
+                            continue;
+                        }
+
+                        // Schedule the session
+                        $this->scheduleSession($course, $sessionType, $timetable, $day);
+
+                        // Track the day for this course
+                        $courseDayTrack[$course->id][] = $day;
+                        $scheduled = true;
+                        break; // Stop once the course is scheduled for a valid day
+                    }
+
+                    // If the course couldn't be scheduled, log a conflict
+                    if (!$scheduled) {
+                        $this->logConflict($group->id, $course->id, $sessionType->id, 'No available day for scheduling');
+                    }
                 }
             }
         }
@@ -88,138 +117,61 @@ class TimetableSV extends BaseService
         return $this->timetable;
     }
 
-    // Modified to remove $group parameter since it's accessible via timetable
-    protected function scheduleSession($course, $sessionType, $timetable): void
+    protected function isConsecutiveDay(string $lastDay, string $currentDay): bool
     {
         $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+        $lastDayIndex = array_search($lastDay, $days);
+        $currentDayIndex = array_search($currentDay, $days);
 
-        if ($course->credit == 1) {
-            $fixedSlots = [
-                ['day' => 'wednesday', 'start_time' => '08:30:00', 'end_time' => '10:00:00'],
-                ['day' => 'wednesday', 'start_time' => '10:15:00', 'end_time' => '11:45:00']
-            ];
+        return abs($lastDayIndex - $currentDayIndex) === 1;
+    }
+    // Modified to remove $group parameter since it's accessible via timetable
+    protected function scheduleSession($course, $sessionType, $timetable, $day): void
+    {
+        // Find available timeslot for the given day
+        $availableSlot = $this->findAvailableTimeSlotForDay($timetable->id, $day);
+        if ($availableSlot) {
+            $startTime = $availableSlot;
+            $endTime = $startTime + 1.5; // 1.5 hours (90 minutes)
 
-            foreach ($fixedSlots as $slot) {
-                $room = Room::where('name', 'like', 'Cosmos Hall')->first();
-                if ($room) {
-                    $courseUser = CourseUser::where('course_id', $course->id)->inRandomOrder()->first();
-                    ScheduleSession::create([
-                        'id' => Str::uuid(),
-                        'timetable_id' => $timetable->id,
-                        'course_user_id' => $courseUser->id,
-                        'room_id' => $room->id,
-                        'day' => $slot['day'],
-                        'start_time' => $slot['start_time'],
-                        'end_time' => $slot['end_time'],
-                        'status' => 'approved',
-                        'session_type_id' => $sessionType->id,
-                    ]);
+            // Format times for database check
+            $formattedStartTime = $this->formatTime($startTime);
+            $formattedEndTime = $this->formatTime($endTime);
+
+            // Find an available room by checking for existing bookings
+            $room = $this->findAvailableRoomForTimeSlot($day, $formattedStartTime, $formattedEndTime);
+
+            if ($room) {
+                // Check for overlapping sessions in the same timetable
+                $overlappingSession = ScheduleSession::where('timetable_id', $timetable->id)
+                    ->where('day', $day)
+                    ->where(function ($query) use ($formattedStartTime, $formattedEndTime) {
+                        $query->where(function ($q) use ($formattedStartTime, $formattedEndTime) {
+                            $q->where('start_time', '<', $formattedEndTime)
+                                ->where('end_time', '>', $formattedStartTime);
+                        });
+                    })
+                    ->exists();
+
+                if ($overlappingSession) {
+                    // Log conflict if overlapping session exists
+                    $this->logConflict($timetable->student_group_id, $course->id, $sessionType->id, 'Overlapping session detected');
+                    return;
                 }
-            }
-            return; // Skip further scheduling for this course
-        }
 
-        if ($course->credit == 3) {
-            $sessionsToGenerate = [
-                'theory' => 1, // 1 theory session
-                'lab' => 2     // 2 lab sessions
-            ];
-
-            foreach ($sessionsToGenerate as $type => $count) {
-                for ($i = 0; $i < $count; $i++) {
-                    foreach ($days as $day) {
-                        // Check daily session limit
-                        $existingSessions = ScheduleSession::where('timetable_id', $timetable->id)
-                            ->where('day', $day)
-                            ->count();
-
-                        if ($existingSessions >= 4) {
-                            continue; // Skip this day, already at max sessions
-                        }
-
-                        // Find available timeslot
-                        $availableSlot = $this->findAvailableTimeSlotForDay($timetable->id, $day);
-                        if ($availableSlot) {
-                            $startTime = $availableSlot;
-                            $endTime = $startTime + 1.5; // 1.5 hours (90 minutes)
-
-                            // Format times for database check
-                            $formattedStartTime = $this->formatTime($startTime);
-                            $formattedEndTime = $this->formatTime($endTime);
-
-                            // Find an available room by checking for existing bookings
-                            $room = $this->findAvailableRoomForTimeSlot($day, $formattedStartTime, $formattedEndTime);
-
-                            if ($room) {
-                                $courseUser = CourseUser::where('course_id', $course->id)->inRandomOrder()->first();
-                                $sessionTypeId = $type === 'theory'
-                                    ? SessionType::where('name', 'like', 'Theory')->first()->id
-                                    : SessionType::where('name', 'like', 'Lab')->first()->id;
-
-                                ScheduleSession::create([
-                                    'id' => Str::uuid(),
-                                    'timetable_id' => $timetable->id,
-                                    'course_user_id' => $courseUser->id,
-                                    'room_id' => $room->id,
-                                    'day' => $day,
-                                    'start_time' => $formattedStartTime,
-                                    'end_time' => $formattedEndTime,
-                                    'status' => 'approved',
-                                    'session_type_id' => $sessionTypeId,
-                                ]);
-
-                                break; // Move to the next session
-                            }
-                        }
-                    }
-                }
-            }
-            return; // Skip further scheduling for this course
-        }
-
-        $sessionsToGenerate = $course->credit; // Number of sessions to generate
-        foreach ($days as $day) {
-            // Check daily session limit
-            $existingSessions = ScheduleSession::where('timetable_id', $timetable->id)
-                ->where('day', $day)
-                ->count();
-
-            if ($existingSessions >= 4) {
-                continue; // Skip this day, already at max sessions
-            }
-
-            // Find available timeslot
-            $availableSlot = $this->findAvailableTimeSlotForDay($timetable->id, $day);
-            if ($availableSlot) {
-                $startTime = $availableSlot;
-                $endTime = $startTime + 1.5; // 1.5 hours (90 minutes)
-
-                // Format times for database check
-                $formattedStartTime = $this->formatTime($startTime);
-                $formattedEndTime = $this->formatTime($endTime);
-
-                // Find an available room by checking for existing bookings
-                $room = $this->findAvailableRoomForTimeSlot($day, $formattedStartTime, $formattedEndTime);
-
-                if ($room) {
-                    $courseUser = CourseUser::where('course_id', $course->id)->inRandomOrder()->first();
-                    ScheduleSession::create([
-                        'id' => Str::uuid(),
-                        'timetable_id' => $timetable->id,
-                        'course_user_id' => $courseUser->id,
-                        'room_id' => $room->id,
-                        'day' => $day,
-                        'start_time' => $formattedStartTime,
-                        'end_time' => $formattedEndTime,
-                        'status' => 'approved',
-                        'session_type_id' => $sessionType->id,
-                    ]);
-
-                    $sessionsToGenerate--;
-                    if ($sessionsToGenerate <= 0) {
-                        return; // Stop scheduling once all sessions are generated
-                    }
-                }
+                // Create the session
+                $courseUser = CourseUser::where('course_id', $course->id)->inRandomOrder()->first();
+                ScheduleSession::create([
+                    'id' => Str::uuid(),
+                    'timetable_id' => $timetable->id,
+                    'course_user_id' => $courseUser->id,
+                    'room_id' => $room->id,
+                    'day' => $day,
+                    'start_time' => $formattedStartTime,
+                    'end_time' => $formattedEndTime,
+                    'status' => 'approved',
+                    'session_type_id' => $sessionType->id,
+                ]);
             }
         }
     }
