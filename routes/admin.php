@@ -65,7 +65,6 @@ Route::group(['middleware' => 'auth:admin', 'prefix' => 'auth'], function ($rout
     Route::get("user", [UserController::class, 'index'])->name('users.index');
     Route::get("user/create", [UserController::class, 'create'])->name('users.create');
     Route::post("user/create", [UserController::class, 'store'])->name('users.store');
-    Route::get("user/edit/{user}", [UserController::class, 'edit'])->name('users.edit');
     Route::put("user/edit/{user}", [UserController::class, 'update'])->name('users.update');
     Route::delete("user/edit/{user}", [UserController::class, 'destroy'])->name('users.delete');
     Route::get("user/search", [UserController:: class, 'search'])->name('users.search');
